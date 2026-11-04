@@ -101,3 +101,4 @@ jobs:
             paketler/*.exe
             paketler/*.zip
             paketler/*.dmg
+            paketler/*.appx
