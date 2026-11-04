@@ -10,6 +10,11 @@ on:
     branches: [main]
     paths: ['package.json', '.github/workflows/surum.yml']
   workflow_dispatch:
+    inputs:
+      macos:
+        description: 'macOS paketi de derlensin mi? (deneme aşamasında)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write       # Releases sayfasına dosya yüklemek için
@@ -44,6 +49,7 @@ jobs:
             dist/*.appx
 
   macos:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.macos }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,6 +69,7 @@ jobs:
 
   yayinla:
     needs: [windows, macos]
+    if: ${{ !failure() && !cancelled() && needs.windows.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,10 +83,7 @@ jobs:
       - name: Kaynak doğrulaması
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: |
-            paketler/*.exe
-            paketler/*.zip
-            paketler/*.dmg
+          subject-path: 'paketler/*'
       - name: Releases sayfasına yükle
         uses: softprops/action-gh-release@v2
         with:
