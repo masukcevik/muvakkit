@@ -7,7 +7,7 @@ const { buildState } = require('./vakit');
 const { isFullscreenActive, sampleAround } = require('./fullscreen');
 
 const AUMID = 'com.namazvakti.app';
-const PANEL_W = 380, PANEL_H = 624;
+const PANEL_W = 380, PANEL_H = 652;
 const EDGE = 8; // gösterge ile ekran kenarı arasında bırakılan en az boşluk
 // Microsoft Store (MSIX) sürümünde başlangıçta açılma ve kısayollar Windows tarafından yönetilir
 const IS_STORE = !!process.windowsStore;
@@ -89,6 +89,17 @@ function ensureStartMenuShortcut() {
       target: process.execPath, appUserModelId: AUMID, description: 'Namaz Vakti'
     });
   } catch {}
+}
+
+// Masaüstüne kısayol (zip sürümünü kullananlar ya da simgeyi silenler için)
+function desktopShortcutPath() { return path.join(app.getPath('desktop'), 'Namaz Vakti.lnk'); }
+function createDesktopShortcut() {
+  if (process.platform !== 'win32' || IS_STORE) return false;
+  try {
+    return shell.writeShortcutLink(desktopShortcutPath(), fs.existsSync(desktopShortcutPath()) ? 'replace' : 'create', {
+      target: process.execPath, appUserModelId: AUMID, description: 'Namaz Vakti'
+    });
+  } catch { return false; }
 }
 
 // ---------- Gösterge konumu ----------
@@ -307,6 +318,8 @@ function pushState() {
   st.settings = { notify: settings.notify, sound: settings.sound, showWidget: settings.showWidget, autoStart: settings.autoStart, widget: w, store: IS_STORE };
   st.widgetDefaults = WIDGET_DEFAULTS;
   st.version = app.getVersion();
+  st.canDesktopShortcut = process.platform === 'win32' && !IS_STORE;
+  st.hasDesktopShortcut = st.canDesktopShortcut && fs.existsSync(desktopShortcutPath());
   lastState = st;
 
   // Bildirim: bir vakit yeni girdiyse (Güneş hariç) bir kez göster
@@ -341,6 +354,7 @@ ipcMain.on('reset-widget-pos', () => resetWidgetPosition());
 ipcMain.on('widget-interactive', (_e, v) => { if (!moveMode) setWidgetInteractive(!!v); });
 ipcMain.on('start-move-mode', () => { if (panel) panel.hide(); startMoveMode(); });
 ipcMain.on('end-move-mode', () => endMoveMode());
+ipcMain.on('desktop-shortcut', () => { createDesktopShortcut(); pushState(); });
 ipcMain.on('quit', () => { app.isQuitting = true; app.quit(); });
 
 // Gösterge içeriğine göre pencere boyutu: sağ alt köşe sabit kalır

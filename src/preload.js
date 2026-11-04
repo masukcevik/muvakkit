@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('api', {
   closePanel: () => ipcRenderer.send('close-panel'),
   pinPanel: (v) => ipcRenderer.send('pin-panel', v),
   resetWidgetPos: () => ipcRenderer.send('reset-widget-pos'),
+  desktopShortcut: () => ipcRenderer.send('desktop-shortcut'),
   quit: () => ipcRenderer.send('quit'),
   setInteractive: (v) => ipcRenderer.send('widget-interactive', v),
   onBgSample: (cb) => ipcRenderer.on('bg-sample', (_e, c) => cb(c)),

@@ -57,6 +57,8 @@ function renderMain() {
   $('sound').disabled = !st.settings.notify;
   // Store sürümünde başlangıç ayarı Windows'tan yönetilir
   $('autoStartRow').style.display = st.settings.store ? 'none' : '';
+  // Masaüstünde kısayol yoksa ekleme düğmesini göster
+  $('desktopBtn').style.display = st.canDesktopShortcut && !st.hasDesktopShortcut ? '' : 'none';
 }
 
 // ---------- Özelleştir görünümü ----------
@@ -201,6 +203,7 @@ $('back').addEventListener('click', () => showView('main'));
 $('close').addEventListener('click', () => window.api.closePanel());
 $('close2').addEventListener('click', () => window.api.closePanel());
 $('quit').addEventListener('click', () => window.api.quit());
+$('desktopBtn').addEventListener('click', () => window.api.desktopShortcut());
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { if (!$('custom').classList.contains('hidden')) showView('main'); else window.api.closePanel(); }
 });

@@ -1,7 +1,7 @@
 {
   "name": "namaz-vakti",
   "productName": "Namaz Vakti",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Çalışırken namaz vakitlerini sessizce gösteren, reklamsız ve ücretsiz masaüstü uygulaması",
   "author": "Maşuk",
   "license": "GPL-3.0-or-later",
@@ -66,12 +66,14 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": false,
+      "createDesktopShortcut": true,
       "installerLanguages": [
         "tr_TR"
       ],
       "language": "1055",
-      "artifactName": "NamazVakti-Kurulum-${version}.${ext}"
+      "artifactName": "NamazVakti-Kurulum-${version}.${ext}",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Namaz Vakti"
     },
     "appx": {
       "applicationId": "NamazVakti",
