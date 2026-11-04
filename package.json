@@ -76,9 +76,6 @@
     "appx": {
       "applicationId": "NamazVakti",
       "displayName": "Namaz Vakti Göstergesi",
-      "identityName": "${env.STORE_IDENTITY_NAME}",
-      "publisher": "${env.STORE_PUBLISHER}",
-      "publisherDisplayName": "${env.STORE_PUBLISHER_NAME}",
       "languages": [
         "tr-TR"
       ],

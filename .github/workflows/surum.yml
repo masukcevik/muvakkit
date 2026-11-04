@@ -35,7 +35,12 @@ jobs:
         run: npx electron-builder --win nsis zip --x64 --publish never
       - name: Microsoft Store paketi (Store bilgileri girildiyse)
         if: ${{ vars.STORE_IDENTITY_NAME != '' }}
-        run: npx electron-builder --win appx --x64 --publish never
+        shell: bash
+        run: >-
+          npx electron-builder --win appx --x64 --publish never
+          "-c.appx.identityName=$STORE_IDENTITY_NAME"
+          "-c.appx.publisher=$STORE_PUBLISHER"
+          "-c.appx.publisherDisplayName=$STORE_PUBLISHER_NAME"
         env:
           STORE_IDENTITY_NAME: ${{ vars.STORE_IDENTITY_NAME }}
           STORE_PUBLISHER: ${{ vars.STORE_PUBLISHER }}
