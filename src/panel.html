@@ -137,11 +137,15 @@
       <div class="crow"><span>Yazı</span><div class="sw" data-color="text"></div></div>
       <div class="crow"><span>Vurgu</span><div class="sw" data-color="accent"></div></div>
       <div class="crow"><span>Vakit girince</span><div class="sw" data-color="entered"></div></div>
+      <label class="opt">Arkaya göre otomatik zıt renk <input type="checkbox" id="autoContrast"></label>
+      <p class="hint">Gösterge, arkasındaki masaüstü ya da pencere açık renkliyse koyu, koyu renkliyse açık yazıya geçer. Seçtiğin yazı rengi okunaklıysa korunur.</p>
     </div>
 
     <div class="sec">
       <h3>Görünüm</h3>
-      <div class="crow"><span>Saydamlık</span><input type="range" id="opacity" min="20" max="100" step="5" aria-label="Arka plan opaklığı"><span class="val" id="opacityVal"></span></div>
+      <p class="hint" style="margin-top:-4px">Zemin ve yazının ne kadar belirgin olacağı (%100 = tamamen opak)</p>
+      <div class="crow"><span>Zemin</span><input type="range" id="opacity" min="20" max="100" step="5" aria-label="Zemin görünürlüğü"><span class="val" id="opacityVal"></span></div>
+      <div class="crow"><span>Yazı</span><input type="range" id="textOpacity" min="20" max="100" step="5" aria-label="Yazı görünürlüğü"><span class="val" id="textOpacityVal"></span></div>
       <div class="crow"><span>Köşeler</span><input type="range" id="radius" min="0" max="30" step="1" aria-label="Köşe yuvarlaklığı"><span class="val" id="radiusVal"></span></div>
       <div class="crow"><span>Boyut</span></div>
       <div class="seg" id="size">

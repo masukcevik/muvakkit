@@ -4,7 +4,7 @@ const { app, BrowserWindow, Tray, Menu, Notification, ipcMain, screen, nativeIma
 const path = require('path');
 const fs = require('fs');
 const { buildState } = require('./vakit');
-const { isFullscreenActive } = require('./fullscreen');
+const { isFullscreenActive, sampleAround } = require('./fullscreen');
 
 const AUMID = 'com.namazvakti.app';
 const PANEL_W = 380, PANEL_H = 624;
@@ -36,7 +36,8 @@ const WIDGET_DEFAULTS = {
   line1: 'vakit-saat', line2: 'kalan',
   approachMin: 10, enteredMin: 5,
   clickThrough: true, hoverFade: true,
-  fullscreenMode: 'soluk', fullscreenShowEntered: true
+  fullscreenMode: 'soluk', fullscreenShowEntered: true,
+  textOpacity: 100, autoContrast: false
 };
 const DEFAULTS = { city: 'İstanbul', notify: true, sound: false, showWidget: true, autoStart: true, widgetPos: null, widget: WIDGET_DEFAULTS };
 
@@ -53,10 +54,11 @@ function cleanWidget(w) {
   if (num(w.radius, 0, 30) !== null) out.radius = num(w.radius, 0, 30);
   if (num(w.approachMin, 0, 60) !== null) out.approachMin = num(w.approachMin, 0, 60);
   if (num(w.enteredMin, 0, 60) !== null) out.enteredMin = num(w.enteredMin, 0, 60);
+  if (num(w.textOpacity, 20, 100) !== null) out.textOpacity = num(w.textOpacity, 20, 100);
   if (SIZES.includes(w.size)) out.size = w.size;
   if (LINE_OPTIONS.includes(w.line1)) out.line1 = w.line1;
   if (LINE_OPTIONS.includes(w.line2)) out.line2 = w.line2;
-  for (const k of ['icon', 'clickThrough', 'hoverFade', 'fullscreenShowEntered']) if (typeof w[k] === 'boolean') out[k] = w[k];
+  for (const k of ['icon', 'clickThrough', 'hoverFade', 'fullscreenShowEntered', 'autoContrast']) if (typeof w[k] === 'boolean') out[k] = w[k];
   if (['soluk', 'gizle', 'normal'].includes(w.fullscreenMode)) out.fullscreenMode = w.fullscreenMode;
   if (out.line1 === 'yok' && out.line2 === 'yok') out.line1 = 'vakit-saat';
   return out;
@@ -174,6 +176,21 @@ function checkFullscreen() {
   applyWidgetVisibility();
 }
 
+// ---------- Otomatik zıt renk ----------
+// Göstergenin arkasındaki rengi okuyup göstergeye bildirir; gösterge yazı rengini buna göre seçer
+let lastSample = null;
+function checkBackground() {
+  if (!widget || widget.isDestroyed() || !widget.isVisible()) return;
+  if (!settings.widget.autoContrast || fullscreen || moveMode || process.platform !== 'win32') return;
+  const b = widget.getBounds();
+  const phys = screen.dipToScreenRect(widget, b); // Windows ekran ölçeklendirmesi (%125, %150 vb.) için
+  const c = sampleAround(phys);
+  if (!c) return;
+  if (lastSample && Math.abs(c.r - lastSample.r) + Math.abs(c.g - lastSample.g) + Math.abs(c.b - lastSample.b) < 24) return;
+  lastSample = c;
+  widget.webContents.send('bg-sample', c);
+}
+
 // ---------- Pencereler ----------
 const commonPrefs = {
   preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true,
@@ -277,6 +294,7 @@ function setSetting(key, value) {
   saveSettings();
   if (key === 'autoStart') applyAutoStart();
   if (key === 'showWidget' || key === 'widget') applyWidgetVisibility();
+  if (key === 'widget') { lastSample = null; setTimeout(checkBackground, 50); }
   if (key === 'city') { dismissedKey = null; }
   if (tray) tray.setContextMenu(buildTrayMenu());
   pushState();
@@ -344,6 +362,7 @@ ipcMain.on('drag-move', (_e, dx, dy) => {
   widget.setPosition(nb.x, nb.y);
 });
 ipcMain.on('drag-end', () => {
+  lastSample = null; setTimeout(checkBackground, 150);
   if (widget) { keepWidgetOnScreen(); const [x, y] = widget.getPosition(); settings.widgetPos = { x, y }; saveSettings(); }
   dragStart = null;
 });
@@ -363,6 +382,7 @@ app.whenReady().then(() => {
   setTimeout(() => { if (!settings.seenIntro) { settings.seenIntro = true; saveSettings(); showPanel('main'); } }, 800);
   setInterval(pushState, 5000);
   setInterval(checkFullscreen, 1500);
+  setInterval(checkBackground, 2000);
   // Ekran çözünürlüğü değişir ya da ikinci ekran çıkarılırsa gösterge görünür alana döner
   for (const ev of ['display-removed', 'display-metrics-changed', 'display-added']) screen.on(ev, () => setTimeout(keepWidgetOnScreen, 300));
 });

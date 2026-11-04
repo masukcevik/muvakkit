@@ -4,6 +4,7 @@
 // Windows'ta sistemin kendi bilgisini ve öndeki pencerenin ekranı kaplayıp kaplamadığını okur.
 // Diğer sistemlerde her zaman false döner.
 let check = () => false;
+let sample = () => null;
 
 if (process.platform === 'win32') {
   try {
@@ -47,12 +48,41 @@ if (process.platform === 'win32') {
       const m = mi.rcMonitor;
       return r.left <= m.left && r.top <= m.top && r.right >= m.right && r.bottom >= m.bottom;
     };
+
+    // Göstergenin hemen etrafındaki birkaç pikselin rengini okur (otomatik zıt renk için).
+    // Ekran görüntüsü almaz; sadece 8 noktayı okur, bu yüzden bellek ve işlemci yükü yok denecek kadar azdır.
+    const GetDC = user32.func('HANDLE __stdcall GetDC(HANDLE hWnd)');
+    const ReleaseDC = user32.func('int __stdcall ReleaseDC(HANDLE hWnd, HANDLE hDC)');
+    const gdi32 = koffi.load('gdi32.dll');
+    const GetPixel = gdi32.func('uint32 __stdcall GetPixel(HANDLE hdc, int x, int y)');
+    const CLR_INVALID = 0xFFFFFFFF;
+    sample = (r) => {
+      const d = 4; // göstergenin kenarından bu kadar piksel dışarısı
+      const xs = [r.x - d, r.x + Math.round(r.width / 2), r.x + r.width + d];
+      const ys = [r.y - d, r.y + Math.round(r.height / 2), r.y + r.height + d];
+      const pts = [];
+      for (const x of xs) for (const y of ys) if (!(x === xs[1] && y === ys[1])) pts.push([x, y]);
+      const dc = GetDC(null);
+      if (!dc) return null;
+      let R = 0, G = 0, B = 0, n = 0;
+      try {
+        for (const [x, y] of pts) {
+          const c = GetPixel(dc, x, y);
+          if (c === CLR_INVALID) continue;
+          R += c & 0xFF; G += (c >> 8) & 0xFF; B += (c >> 16) & 0xFF; n++;
+        }
+      } finally { ReleaseDC(null, dc); }
+      return n ? { r: Math.round(R / n), g: Math.round(G / n), b: Math.round(B / n) } : null;
+    };
   } catch (e) {
     console.error('Tam ekran algılama kullanılamıyor:', e && e.message);
     check = () => false;
+    sample = () => null;
   }
 }
 
 module.exports = {
-  isFullscreenActive() { try { return !!check(); } catch { return false; } }
+  isFullscreenActive() { try { return !!check(); } catch { return false; } },
+  // rect: fiziksel piksel cinsinden {x, y, width, height}; Windows dışında null döner
+  sampleAround(rect) { try { return sample(rect); } catch { return null; } }
 };

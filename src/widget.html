@@ -8,7 +8,7 @@
 <style>
   :root {
     --s: 1; --bg: rgba(20,24,28,0.8); --text: #F2F4F5; --sub: rgba(242,244,245,0.72);
-    --accent: #8FD1B9; --entered: #1F4D41; --line: rgba(242,244,245,0.08); --radius: 12px;
+    --accent: #8FD1B9; --entered: #1F4D41; --shadow: none; --line: rgba(242,244,245,0.08); --radius: 12px;
   }
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; }
   body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; display: flex; align-items: flex-end; justify-content: flex-end; }
@@ -21,7 +21,7 @@
   }
   .pill.yaklasiyor { border-color: var(--accent); }
   .pill.girdi { background: var(--entered); border-color: var(--entered); }
-  .texts { display: flex; flex-direction: column; line-height: 1.25; }
+  .texts { display: flex; flex-direction: column; line-height: 1.25; text-shadow: var(--shadow); }
   .title { color: var(--text); font-size: calc(13px * var(--s)); font-weight: 600; }
   .sub { color: var(--sub); font-size: calc(11px * var(--s)); }
   .yaklasiyor .sub { color: var(--accent); font-weight: 600; }

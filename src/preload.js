@@ -15,6 +15,7 @@ contextBridge.exposeInMainWorld('api', {
   resetWidgetPos: () => ipcRenderer.send('reset-widget-pos'),
   quit: () => ipcRenderer.send('quit'),
   setInteractive: (v) => ipcRenderer.send('widget-interactive', v),
+  onBgSample: (cb) => ipcRenderer.on('bg-sample', (_e, c) => cb(c)),
   onFullscreen: (cb) => ipcRenderer.on('fullscreen', (_e, v) => cb(v)),
   onMoveMode: (cb) => ipcRenderer.on('move-mode', (_e, v) => cb(v)),
   endMoveMode: () => ipcRenderer.send('end-move-mode'),

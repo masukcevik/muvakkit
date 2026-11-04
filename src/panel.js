@@ -125,6 +125,8 @@ function buildCustom() {
     $(id).addEventListener('change', (e) => setW({ [id]: e.target.value }));
   }
   $('opacity').addEventListener('input', (e) => setW({ opacity: Number(e.target.value) }));
+  $('textOpacity').addEventListener('input', (e) => setW({ textOpacity: Number(e.target.value) }));
+  $('autoContrast').addEventListener('change', (e) => setW({ autoContrast: e.target.checked }));
   $('radius').addEventListener('input', (e) => setW({ radius: Number(e.target.value) }));
   $('icon').addEventListener('change', (e) => setW({ icon: e.target.checked }));
   $('clickThrough').addEventListener('change', (e) => setW({ clickThrough: e.target.checked }));
@@ -152,6 +154,9 @@ function renderCustom() {
   });
   if (document.activeElement !== $('opacity')) $('opacity').value = w.opacity;
   $('opacityVal').textContent = '%' + w.opacity;
+  if (document.activeElement !== $('textOpacity')) $('textOpacity').value = w.textOpacity;
+  $('textOpacityVal').textContent = '%' + w.textOpacity;
+  $('autoContrast').checked = w.autoContrast;
   if (document.activeElement !== $('radius')) $('radius').value = w.radius;
   $('radiusVal').textContent = w.radius + ' px';
   $('size').querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.v === w.size));
@@ -178,7 +183,7 @@ function render(s) {
   defaults = s.widgetDefaults;
   if (!built) { buildCustom(); built = true; }
   // Kullanıcı bir değeri sürüklerken gelen periyodik güncelleme onu ezmesin
-  const busy = ['opacity', 'radius'].includes(document.activeElement && document.activeElement.id);
+  const busy = ['opacity', 'textOpacity', 'radius'].includes(document.activeElement && document.activeElement.id);
   if (!busy) w = { ...s.settings.widget };
   renderMain();
   renderCustom();

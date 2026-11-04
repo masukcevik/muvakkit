@@ -29,15 +29,44 @@ function lineText(key, st) {
   }
 }
 
-function applyLook(w) {
+// ---------- Renk yardımcıları ----------
+function hexRgb(hex) { const n = parseInt(hex.slice(1), 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
+function lum({ r, g, b }) {
+  const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+function contrast(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+function mix(top, bottom, a) { return { r: top.r * a + bottom.r * (1 - a), g: top.g * a + bottom.g * (1 - a), b: top.b * a + bottom.b * (1 - a) }; }
+const LIGHT = '#F5F7F8', DARK = '#14181C';
+let bgSample = null; // göstergenin arkasındaki renk (Windows'ta ana süreçten gelir)
+
+// Otomatik zıt renk: seçilen yazı rengi arkadaki renkle okunaklıysa korunur, değilse açık/koyu olana geçilir
+function pickColors(w, mode) {
+  const base = { text: w.text, accent: w.accent, shadow: 'none' };
+  if (!w.autoContrast || !bgSample) return base;
+  const pill = mode === 'girdi' ? hexRgb(w.entered) : hexRgb(w.bg);
+  const alpha = mode === 'girdi' ? Math.max(w.opacity, 90) / 100 : w.opacity / 100;
+  const eff = mix(pill, bgSample, alpha);
+  let text = w.text;
+  if (contrast(hexRgb(text), eff) < 4.5) text = contrast(hexRgb(LIGHT), eff) >= contrast(hexRgb(DARK), eff) ? LIGHT : DARK;
+  const accent = contrast(hexRgb(w.accent), eff) < 2.2 ? text : w.accent;
+  // Arka plan çok saydamsa yazının etrafına hafif bir gölge: karışık arka planlarda da okunsun
+  const shadowCol = lum(hexRgb(text)) > 0.5 ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.6)';
+  return { text, accent, shadow: alpha < 0.6 ? `0 0 3px ${shadowCol}` : 'none' };
+}
+
+function applyLook(w, mode) {
+  const c = pickColors(w, mode);
+  const to = (w.textOpacity ?? 100) / 100;
   root.setProperty('--s', SCALE[w.size] || 1);
   root.setProperty('--bg', rgba(w.bg, w.opacity / 100));
-  root.setProperty('--text', w.text);
-  root.setProperty('--sub', rgba(w.text, 0.72));
-  root.setProperty('--line', rgba(w.text, 0.12));
-  root.setProperty('--accent', w.accent);
+  root.setProperty('--text', rgba(c.text, to));
+  root.setProperty('--sub', rgba(c.text, 0.72 * to));
+  root.setProperty('--line', rgba(c.text, 0.12));
+  root.setProperty('--accent', c.accent);
   root.setProperty('--entered', rgba(w.entered, Math.max(w.opacity, 90) / 100));
   root.setProperty('--radius', w.radius + 'px');
+  root.setProperty('--shadow', c.shadow);
 }
 
 function render(st) {
@@ -45,7 +74,7 @@ function render(st) {
   const w = st.settings.widget;
   const ctChanged = !lastW || lastW.clickThrough !== w.clickThrough;
   lastW = w; lastState = st;
-  applyLook(w);
+  applyLook(w, st.mode);
   if (ctChanged) { interactive = null; setInteractive(!clickThrough()); }
   const keep = ['ghost', 'active'].filter(c => pill.classList.contains(c));
   // Tam ekranda soluk: vakit girdiyse (ayar açıksa) normal görünür
@@ -130,6 +159,11 @@ pill.addEventListener('pointerup', (e) => {
 });
 pill.addEventListener('dblclick', () => {
   if (lastW && !lastW.clickThrough && !moveMode) window.api.openPanel();
+});
+
+window.api.onBgSample((c) => {
+  bgSample = c;
+  if (lastState) render(lastState);
 });
 
 window.api.onFullscreen((v) => {
