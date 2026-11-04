@@ -59,7 +59,8 @@
           ]
         }
       ],
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "artifactName": "NamazVakti-Windows-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -71,9 +72,6 @@
       ],
       "language": "1055",
       "artifactName": "NamazVakti-Kurulum-${version}.${ext}"
-    },
-    "zip": {
-      "artifactName": "NamazVakti-Windows-${version}.${ext}"
     },
     "appx": {
       "applicationId": "NamazVakti",
