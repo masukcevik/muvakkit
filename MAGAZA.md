@@ -4,7 +4,7 @@ Ayrıntılı adımlar için bu dosyadaki bölümleri sırayla takip et.
 
 ## Mağaza bilgileri (kopyala-yapıştır)
 
-**Ad:** Namaz Vakti
+**Ad:** Namaz Vakti Göstergesi (Partner Center'da ayrılan adla aynı olmalı)
 
 **Kısa açıklama:**
 Çalışırken namaz vakitlerini ekranın köşesinde sessizce gösteren, reklamsız ve ücretsiz uygulama.
