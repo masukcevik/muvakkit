@@ -10,6 +10,7 @@ let defaults = null;
 function showView(v) {
   $('main').classList.toggle('hidden', v !== 'main');
   $('custom').classList.toggle('hidden', v !== 'custom');
+  $('settingsView').classList.toggle('hidden', v !== 'settings');
   // Özelleştirirken renk seçici açılınca pencere kapanmasın
   window.api.pinPanel(v === 'custom');
 }
@@ -59,6 +60,8 @@ function renderMain() {
   $('autoStartRow').style.display = st.settings.store ? 'none' : '';
   // Masaüstünde kısayol yoksa ekleme düğmesini göster
   $('desktopBtn').style.display = st.canDesktopShortcut && !st.hasDesktopShortcut ? '' : 'none';
+  $('hasShortcut').style.display = st.canDesktopShortcut && st.hasDesktopShortcut ? '' : 'none';
+  renderVerse();
 }
 
 // ---------- Özelleştir görünümü ----------
@@ -199,11 +202,33 @@ for (const k of ['notify', 'sound', 'showWidget', 'autoStart']) {
   $(k).addEventListener('change', (e) => window.api.setSetting(k, e.target.checked));
 }
 $('openCustom2').addEventListener('click', () => showView('custom'));
+$('openSettings').addEventListener('click', () => showView('settings'));
+$('backS').addEventListener('click', () => showView('main'));
+$('closeS').addEventListener('click', () => window.api.closePanel());
 $('back').addEventListener('click', () => showView('main'));
 $('close').addEventListener('click', () => window.api.closePanel());
 $('close2').addEventListener('click', () => window.api.closePanel());
 $('quit').addEventListener('click', () => window.api.quit());
 $('desktopBtn').addEventListener('click', () => window.api.desktopShortcut());
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { if (!$('custom').classList.contains('hidden')) showView('main'); else window.api.closePanel(); }
+  if (e.key === 'Escape') { if ($('main').classList.contains('hidden')) showView('main'); else window.api.closePanel(); }
 });
+
+// ---------- Günün ayeti / hadisi ----------
+// İçerik src/icerik.js dosyasından gelir. Her gün sıradaki metin gösterilir; düğmeyle sonrakine geçilir.
+let verseOffset = 0;
+function renderVerse() {
+  const list = (window.ICERIK || []).filter(x => x && x.metin);
+  if (!list.length) { $('verse').classList.add('hidden'); return; }
+  $('verse').classList.remove('hidden');
+  const now = new Date();
+  const day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+  const item = list[((day + verseOffset) % list.length + list.length) % list.length];
+  const same = $('vText').dataset.key === item.kaynak;
+  if (same) return;
+  $('vText').dataset.key = item.kaynak;
+  $('vTag').textContent = verseOffset === 0 ? (item.tur === 'hadis' ? 'Günün hadisi' : 'Günün ayeti') : (item.tur === 'hadis' ? 'Hadis' : 'Ayet');
+  $('vText').textContent = item.metin;
+  $('vSrc').textContent = item.kaynak;
+}
+$('vNext').addEventListener('click', () => { verseOffset++; renderVerse(); });
