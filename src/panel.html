@@ -1,0 +1,203 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later — Namaz Vakti, Copyright (C) 2026 Maşuk -->
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Namaz Vakti</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #181C20; color: #E6EAED; overflow: hidden; user-select: none; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; }
+  .view { box-sizing: border-box; height: 100%; padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; border: 1px solid #2A3138; }
+  .view.hidden { display: none; }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; -webkit-app-region: drag; }
+  .top select, .top button { -webkit-app-region: no-drag; }
+  label.small { display: block; font-size: 12px; color: #9AA5AF; margin-bottom: 4px; }
+  select { font-family: inherit; font-size: 15px; font-weight: 600; color: #F2F4F5; background: #23292F; border: 1px solid #333B43; border-radius: 8px; padding: 6px 8px; min-height: 36px; outline: none; }
+  select:focus { border-color: #8FD1B9; }
+  .date { text-align: right; display: flex; flex-direction: column; gap: 2px; white-space: nowrap; }
+  .date .d { font-size: 13px; color: #C9D0D7; }
+  .date .g { font-size: 12px; color: #9AA5AF; }
+  .date .h { font-size: 12px; color: #8FD1B9; margin-top: 2px; }
+  .iconbtn { width: 32px; height: 32px; border: none; border-radius: 8px; background: transparent; color: #9AA5AF; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .iconbtn:hover { background: #23292F; color: #E6EAED; }
+  .btns { display: flex; margin: -6px -8px 0 6px; }
+  .card { background: #1F4D41; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
+  .card .l { font-size: 12px; color: #DDF3EA; }
+  .card .t { font-size: 24px; font-weight: 700; color: #fff; }
+  .card .s { font-size: 14px; color: #DDF3EA; }
+  .list { display: flex; flex-direction: column; }
+  .row { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 8px; font-size: 15px; }
+  .row.gecti { color: #7E8892; }
+  .row.sirada { background: #23292F; color: #8FD1B9; font-weight: 700; }
+  .settings { margin-top: auto; border-top: 1px solid #2A3138; padding-top: 10px; display: flex; flex-direction: column; gap: 0; }
+  .opt { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; color: #C9D0D7; min-height: 29px; cursor: pointer; }
+  .opt input[type=checkbox] { width: 16px; height: 16px; accent-color: #8FD1B9; cursor: pointer; }
+  .link { background: none; border: none; color: #8FD1B9; font: inherit; font-size: 13.5px; cursor: pointer; padding: 0; text-align: left; min-height: 29px; display: flex; justify-content: space-between; align-items: center; }
+  .link:hover { color: #BDE6D6; }
+  .foot { font-size: 11px; color: #8A949E; margin-top: 4px; display: flex; justify-content: space-between; gap: 8px; }
+  .foot button { background: none; border: none; color: #9AA5AF; font: inherit; font-size: 11px; cursor: pointer; padding: 0; text-decoration: underline; }
+
+  /* Özelleştir görünümü */
+  #custom { gap: 10px; padding-bottom: 14px; }
+  .chead { display: flex; align-items: center; gap: 6px; -webkit-app-region: drag; }
+  .chead button { -webkit-app-region: no-drag; }
+  .chead h2 { margin: 0; font-size: 16px; font-weight: 700; color: #F2F4F5; flex: 1; }
+  .scroll { overflow-y: auto; flex: 1; margin: 0 -10px; padding: 0 10px; display: flex; flex-direction: column; gap: 16px; }
+  .scroll::-webkit-scrollbar { width: 8px; }
+  .scroll::-webkit-scrollbar-thumb { background: #333B43; border-radius: 4px; }
+  .sec { display: flex; flex-direction: column; gap: 8px; }
+  .sec h3 { margin: 0; font-size: 11.5px; font-weight: 700; color: #9AA5AF; text-transform: uppercase; letter-spacing: .04em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font: inherit; font-size: 12.5px; color: #E6EAED; background: #23292F; border: 1px solid #333B43; border-radius: 999px; padding: 5px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .chip:hover { border-color: #5B6670; }
+  .chip.on { border-color: #8FD1B9; color: #8FD1B9; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); }
+  .crow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .crow > span { font-size: 13px; color: #C9D0D7; min-width: 84px; flex-shrink: 0; }
+  .sw { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .swatch { width: 20px; height: 20px; border-radius: 6px; border: 1px solid rgba(255,255,255,.18); cursor: pointer; padding: 0; }
+  .swatch.on { outline: 2px solid #8FD1B9; outline-offset: 1px; }
+  input[type=color] { width: 24px; height: 22px; padding: 0; border: 1px dashed #5B6670; border-radius: 6px; background: none; cursor: pointer; }
+  input[type=color]::-webkit-color-swatch-wrapper { padding: 2px; }
+  input[type=color]::-webkit-color-swatch { border: none; border-radius: 4px; }
+  input[type=range] { flex: 1; accent-color: #8FD1B9; max-width: 170px; }
+  .val { font-size: 12px; color: #9AA5AF; width: 38px; text-align: right; }
+  .seg { display: flex; background: #23292F; border-radius: 8px; padding: 2px; gap: 2px; }
+  .seg button { flex: 1; font: inherit; font-size: 12.5px; color: #C9D0D7; background: none; border: none; border-radius: 6px; padding: 6px 4px; cursor: pointer; }
+  .seg button.on { background: #354049; color: #fff; font-weight: 600; }
+  .crow select { font-size: 13px; font-weight: 500; min-height: 30px; padding: 4px 6px; flex: 1; max-width: 240px; }
+  .wide { font: inherit; font-size: 13px; color: #E6EAED; background: #23292F; border: 1px solid #333B43; border-radius: 8px; padding: 8px 10px; cursor: pointer; text-align: center; }
+  .wide:hover { border-color: #5B6670; }
+  .hint { font-size: 11.5px; color: #8A949E; margin: 0; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- ANA GÖRÜNÜM -->
+<div class="view" id="main">
+  <div class="top">
+    <div>
+      <label class="small" for="city">Şehir</label>
+      <select id="city"></select>
+    </div>
+    <div style="display:flex">
+      <div class="date"><span class="d" id="date"></span><span class="g" id="day"></span><span class="h" id="hijri"></span></div>
+      <div class="btns">
+        <button class="iconbtn" id="close" aria-label="Kapat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="l" id="cardLabel">Sıradaki vakit</span>
+    <span class="t" id="cardTitle">…</span>
+    <span class="s" id="cardSub"></span>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="settings">
+    <label class="opt">Vakit girince bildirim <input type="checkbox" id="notify"></label>
+    <label class="opt">Bildirimde ses <input type="checkbox" id="sound"></label>
+    <label class="opt">Köşe göstergesi <input type="checkbox" id="showWidget"></label>
+    <label class="opt" id="autoStartRow">Bilgisayar açılınca başlat <input type="checkbox" id="autoStart"></label>
+    <button class="link" id="openCustom2">Göstergeyi özelleştir <span aria-hidden="true">›</span></button>
+    <div class="foot">
+      <span>Diyanet yöntemiyle · 1–2 dk fark olabilir</span>
+      <span style="display:flex; gap:10px"><span id="version"></span><button id="quit">Çıkış</button></span>
+    </div>
+  </div>
+</div>
+
+<!-- ÖZELLEŞTİR GÖRÜNÜMÜ -->
+<div class="view hidden" id="custom">
+  <div class="chead">
+    <button class="iconbtn" id="back" aria-label="Geri">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+    </button>
+    <h2>Göstergeyi özelleştir</h2>
+    <button class="iconbtn" id="close2" aria-label="Kapat">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+  </div>
+  <p class="hint">Değişiklikler köşedeki göstergeye anında uygulanır.</p>
+
+  <div class="scroll">
+    <div class="sec">
+      <h3>Hazır temalar</h3>
+      <div class="chips" id="presets"></div>
+    </div>
+
+    <div class="sec">
+      <h3>Renkler</h3>
+      <div class="crow"><span>Arka plan</span><div class="sw" data-color="bg"></div></div>
+      <div class="crow"><span>Yazı</span><div class="sw" data-color="text"></div></div>
+      <div class="crow"><span>Vurgu</span><div class="sw" data-color="accent"></div></div>
+      <div class="crow"><span>Vakit girince</span><div class="sw" data-color="entered"></div></div>
+    </div>
+
+    <div class="sec">
+      <h3>Görünüm</h3>
+      <div class="crow"><span>Saydamlık</span><input type="range" id="opacity" min="20" max="100" step="5" aria-label="Arka plan opaklığı"><span class="val" id="opacityVal"></span></div>
+      <div class="crow"><span>Köşeler</span><input type="range" id="radius" min="0" max="30" step="1" aria-label="Köşe yuvarlaklığı"><span class="val" id="radiusVal"></span></div>
+      <div class="crow"><span>Boyut</span></div>
+      <div class="seg" id="size">
+        <button data-v="kucuk">Küçük</button><button data-v="normal">Normal</button><button data-v="buyuk">Büyük</button><button data-v="cokbuyuk">Çok büyük</button>
+      </div>
+      <label class="opt">Hilal simgesi <input type="checkbox" id="icon"></label>
+    </div>
+
+    <div class="sec">
+      <h3>Yazılar</h3>
+      <div class="crow"><span>Üst satır</span><select id="line1" aria-label="Üst satır"></select></div>
+      <div class="crow"><span>Alt satır</span><select id="line2" aria-label="Alt satır"></select></div>
+    </div>
+
+    <div class="sec">
+      <h3>Uyarılar</h3>
+      <div class="crow"><span>Vakte kala çerçeve</span>
+        <select id="approachMin" aria-label="Vakte kala çerçeve">
+          <option value="0">Kapalı</option><option value="5">5 dk kala</option><option value="10">10 dk kala</option><option value="15">15 dk kala</option><option value="30">30 dk kala</option>
+        </select></div>
+      <div class="crow"><span>Vakit girince renk</span>
+        <select id="enteredMin" aria-label="Vakit girince renk">
+          <option value="0">Kapalı</option><option value="3">3 dk</option><option value="5">5 dk</option><option value="10">10 dk</option><option value="15">15 dk</option><option value="30">30 dk</option>
+        </select></div>
+    </div>
+
+    <div class="sec">
+      <h3>Davranış</h3>
+      <label class="opt">Tıklamalar arkaya geçsin <input type="checkbox" id="clickThrough"></label>
+      <p class="hint" id="ctHint"></p>
+      <label class="opt">Fare üstüne gelince soluklaş <input type="checkbox" id="hoverFade"></label>
+    </div>
+
+    <div class="sec">
+      <h3>Oyun ve video (tam ekran)</h3>
+      <div class="crow"><span>Tam ekranda</span>
+        <select id="fullscreenMode" aria-label="Tam ekranda">
+          <option value="soluk">Neredeyse görünmez olsun</option>
+          <option value="gizle">Tamamen gizlensin</option>
+          <option value="normal">Değişmesin</option>
+        </select></div>
+      <label class="opt">Vakit girince yine de göster <input type="checkbox" id="fullscreenShowEntered"></label>
+      <p class="hint">Tam ekranda tıklamalar her zaman oyuna ya da videoya gider.</p>
+    </div>
+
+    <div class="sec">
+      <h3>Konum</h3>
+      <button class="wide" id="moveWidget">Göstergeyi taşı</button>
+      <button class="wide" id="resetPos">Sağ alt köşeye al</button>
+      <p class="hint">Gösterge ekranın dışına ya da görev çubuğunun altına kaçmaz.</p>
+    </div>
+
+    <button class="wide" id="resetAll">Tüm görünüm ayarlarını varsayılana döndür</button>
+  </div>
+</div>
+
+<script src="panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+{
+  "name": "namaz-vakti",
+  "productName": "Namaz Vakti",
+  "version": "1.0.0",
+  "description": "Çalışırken namaz vakitlerini sessizce gösteren, reklamsız ve ücretsiz masaüstü uygulaması",
+  "author": "Maşuk",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/masukcevik/namaz-vakti",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masukcevik/namaz-vakti.git"
+  },
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --publish never"
+  },
+  "dependencies": {
+    "adhan": "^4.4.6",
+    "koffi": "^3.3.6"
+  },
+  "devDependencies": {
+    "electron": "45.2.2",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.namazvakti.app",
+    "productName": "Namaz Vakti",
+    "copyright": "Copyright (C) 2026 Maşuk — GPL-3.0-or-later",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "LICENSE"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**",
+      "node_modules/@koromix/**"
+    ],
+    "electronLanguages": [
+      "tr",
+      "en-US"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": false,
+      "installerLanguages": [
+        "tr_TR"
+      ],
+      "language": "1055",
+      "artifactName": "NamazVakti-Kurulum-${version}.${ext}"
+    },
+    "zip": {
+      "artifactName": "NamazVakti-Windows-${version}.${ext}"
+    },
+    "appx": {
+      "applicationId": "NamazVakti",
+      "displayName": "Namaz Vakti",
+      "identityName": "${env.STORE_IDENTITY_NAME}",
+      "publisher": "${env.STORE_PUBLISHER}",
+      "publisherDisplayName": "${env.STORE_PUBLISHER_NAME}",
+      "languages": [
+        "tr-TR"
+      ],
+      "addAutoLaunchExtension": true,
+      "backgroundColor": "#1F4D41",
+      "artifactName": "NamazVakti-Store-${version}.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.lifestyle",
+      "extendInfo": {
+        "LSUIElement": true
+      },
+      "artifactName": "NamazVakti-macOS-${version}-${arch}.${ext}"
+    }
+  }
+}

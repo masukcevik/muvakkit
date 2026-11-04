@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later — Namaz Vakti, Copyright (C) 2026 Maşuk -->
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Namaz Vakti</title>
+<style>
+  :root {
+    --s: 1; --bg: rgba(20,24,28,0.8); --text: #F2F4F5; --sub: rgba(242,244,245,0.72);
+    --accent: #8FD1B9; --entered: #1F4D41; --line: rgba(242,244,245,0.08); --radius: 12px;
+  }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; }
+  body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; display: flex; align-items: flex-end; justify-content: flex-end; }
+  .pill {
+    display: inline-flex; align-items: center; gap: calc(10px * var(--s));
+    padding: calc(9px * var(--s)) calc(14px * var(--s)) calc(9px * var(--s)) calc(12px * var(--s)); margin: 4px;
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: var(--radius); cursor: default; transition: background .3s, border-color .3s;
+    white-space: nowrap;
+  }
+  .pill.yaklasiyor { border-color: var(--accent); }
+  .pill.girdi { background: var(--entered); border-color: var(--entered); }
+  .texts { display: flex; flex-direction: column; line-height: 1.25; }
+  .title { color: var(--text); font-size: calc(13px * var(--s)); font-weight: 600; }
+  .sub { color: var(--sub); font-size: calc(11px * var(--s)); }
+  .yaklasiyor .sub { color: var(--accent); font-weight: 600; }
+  .moon { flex-shrink: 0; width: calc(16px * var(--s)); height: calc(16px * var(--s)); }
+  .noicon .moon { display: none; }
+  .noicon.pill { padding-left: calc(14px * var(--s)); }
+  .hidden { display: none; }
+  .pill { transition: background .3s, border-color .3s, opacity .18s; }
+  .pill.fs { opacity: 0.12; }
+  .pill.ghost { opacity: 0.18; }
+  .pill.fs.ghost { opacity: 0.06; }
+  .pill.active { opacity: 1; border-color: var(--accent); cursor: pointer; box-shadow: 0 0 0 2px var(--accent) inset; }
+  .pill.moving { opacity: 1; border: 1px dashed var(--accent); cursor: move; }
+  .close {
+    display: none; margin-left: 2px; width: calc(26px * var(--s)); height: calc(26px * var(--s)); border: none; border-radius: 8px;
+    background: var(--line); align-items: center; justify-content: center; cursor: pointer; padding: 0;
+  }
+  .girdi .close { display: flex; }
+</style>
+</head>
+<body>
+  <div class="pill" id="pill">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" style="stroke: var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    <div class="texts">
+      <span class="title" id="title">…</span>
+      <span class="sub" id="sub"></span>
+    </div>
+    <button class="close" id="close" aria-label="Kapat">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="stroke: var(--text)" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+  </div>
+<script src="widget.js"></script>
+</body>
+</html>
