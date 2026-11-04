@@ -51,7 +51,7 @@ npm start          # uygulamayı çalıştırır
 npm run dist       # bu bilgisayar için paket üretir (dist/ klasörüne)
 ```
 
-Yeni bir sürüm yayınlamak için `package.json` içindeki sürümü artırıp `v1.2.3` biçiminde bir etiket göndermen yeterli. GitHub Actions paketleri derler ve Releases sayfasında bir taslak oluşturur.
+Yeni bir sürüm için `package.json` içindeki sürüm numarasını artırıp main dalına göndermen yeterli. GitHub Actions paketleri derler ve Releases sayfasında bir taslak oluşturur. Taslağı kontrol edip "Publish" deyince sürüm yayınlanır.
 
 ## Lisans
 

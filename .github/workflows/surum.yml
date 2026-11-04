@@ -1,4 +1,5 @@
-# Yeni sürüm: "v1.0.0" gibi bir etiket (tag) gönderilince Windows ve macOS paketlerini
+# Yeni sürüm: package.json'daki sürüm numarası değişip main dalına gönderilince
+# (ya da Actions sekmesinden elle çalıştırılınca) Windows ve macOS paketlerini
 # GitHub'ın kendi sunucularında derler, kaynağını doğrulanabilir şekilde işaretler ve
 # Releases sayfasına yükler. Böylece indirilen her dosyanın bu depodaki koddan
 # üretildiği herkes tarafından kontrol edilebilir.
@@ -6,7 +7,8 @@ name: Sürüm
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+    paths: ['package.json', '.github/workflows/surum.yml']
   workflow_dispatch:
 
 permissions:
@@ -62,8 +64,11 @@ jobs:
   yayinla:
     needs: [windows, macos]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     steps:
+      - uses: actions/checkout@v4
+      - name: Sürüm numarası
+        id: surum
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           path: paketler
@@ -79,6 +84,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
+          tag_name: v${{ steps.surum.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: Namaz Vakti ${{ steps.surum.outputs.version }}
+          generate_release_notes: true
           files: |
             paketler/*.exe
             paketler/*.zip
