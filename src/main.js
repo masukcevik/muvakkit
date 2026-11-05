@@ -4,10 +4,10 @@ const { app, BrowserWindow, Tray, Menu, Notification, ipcMain, screen, nativeIma
 const path = require('path');
 const fs = require('fs');
 const { buildState } = require('./vakit');
-const { isFullscreenActive, sampleAround } = require('./fullscreen');
+const { isFullscreenActive, sampleAround, isLeftButtonDown } = require('./fullscreen');
 
 const AUMID = 'com.namazvakti.app';
-const PANEL_W = 380, PANEL_H = 652;
+const PANEL_W = 380, PANEL_H = 680;
 const EDGE = 8; // gösterge ile ekran kenarı arasında bırakılan en az boşluk
 // Microsoft Store (MSIX) sürümünde başlangıçta açılma ve kısayollar Windows tarafından yönetilir
 const IS_STORE = !!process.windowsStore;
@@ -359,27 +359,53 @@ ipcMain.on('quit', () => { app.isQuitting = true; app.quit(); });
 
 // Gösterge içeriğine göre pencere boyutu: sağ alt köşe sabit kalır
 ipcMain.on('widget-size', (_e, w, h) => {
-  if (!widget || !(w > 20 && h > 20 && w < 1200 && h < 400)) return;
+  if (!widget || drag || !(w > 20 && h > 20 && w < 1200 && h < 400)) return;
   w = Math.ceil(w); h = Math.ceil(h);
   const b = widget.getBounds();
-  if (b.width === w && b.height === h) return;
+  // Ekran ölçeklendirmesinde (%125, %150) yuvarlama yüzünden 1 px fark olabilir: bunu yok say, yoksa gösterge kayar
+  if (Math.abs(b.width - w) <= 1 && Math.abs(b.height - h) <= 1) return;
   const nb = clampToWorkArea({ x: b.x + b.width - w, y: b.y + b.height - h, width: w, height: h });
   widget.setBounds(nb);
   settings.widgetPos = { x: nb.x, y: nb.y }; saveSettings();
 });
 
-let dragStart = null;
-ipcMain.on('drag-start', () => { if (widget) dragStart = widget.getBounds(); });
-ipcMain.on('drag-move', (_e, dx, dy) => {
-  if (!widget || !dragStart) return;
-  const nb = clampToWorkArea({ ...dragStart, x: dragStart.x + dx, y: dragStart.y + dy });
-  widget.setPosition(nb.x, nb.y);
-});
-ipcMain.on('drag-end', () => {
+// ---------- Sürükleme ----------
+// Konum, farenin ekrandaki gerçek yerinden hesaplanır (göstergenin fare olaylarına bağlı değildir).
+// Windows'ta sol tuş bırakıldığı an sürükleme kesin olarak biter; gösterge fareyi "kovalamaz".
+let drag = null; // { bounds, cursor, timer, moved, started }
+function finishDrag() {
+  if (!drag) return;
+  clearInterval(drag.timer);
+  const wasMoved = drag.moved;
+  drag = null;
+  if (widget && !widget.isDestroyed()) {
+    keepWidgetOnScreen();
+    const [x, y] = widget.getPosition(); settings.widgetPos = { x, y }; saveSettings();
+    widget.webContents.send('drag-ended', wasMoved);
+  }
   lastSample = null; setTimeout(checkBackground, 150);
-  if (widget) { keepWidgetOnScreen(); const [x, y] = widget.getPosition(); settings.widgetPos = { x, y }; saveSettings(); }
-  dragStart = null;
+}
+ipcMain.on('drag-start', () => {
+  if (!widget) return;
+  if (drag) clearInterval(drag.timer);
+  drag = { bounds: widget.getBounds(), cursor: screen.getCursorScreenPoint(), moved: false, started: Date.now() };
+  drag.timer = setInterval(() => {
+    if (!drag || !widget || widget.isDestroyed()) return finishDrag();
+    // Tuş bırakıldıysa (Windows) ya da bilinmeyen durumda 2 dk geçtiyse bitir
+    const btn = isLeftButtonDown();
+    if (btn === false || Date.now() - drag.started > 120000) return finishDrag();
+    const c = screen.getCursorScreenPoint();
+    const dx = c.x - drag.cursor.x, dy = c.y - drag.cursor.y;
+    if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+    if (!drag.moved) return;
+    const nb = clampToWorkArea({ ...drag.bounds, x: drag.bounds.x + dx, y: drag.bounds.y + dy });
+    const [px, py] = widget.getPosition();
+    // Boyutu sabit tutarak taşı (farklı ölçekli ekranlar arasında büyüyüp küçülmesin)
+    if (px !== nb.x || py !== nb.y) widget.setBounds({ x: nb.x, y: nb.y, width: drag.bounds.width, height: drag.bounds.height });
+  }, 16);
 });
+ipcMain.on('drag-move', () => {}); // konum artık yukarıda, ana süreçte hesaplanıyor
+ipcMain.on('drag-end', () => finishDrag());
 
 // ---------- Başlat ----------
 app.on('second-instance', () => showPanel('main'));

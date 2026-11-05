@@ -29,6 +29,10 @@ En son sürüm [Releases](../../releases) sayfasında:
 
 Vakitler, Diyanet İşleri Başkanlığı'nın kullandığı hesaplama yöntemiyle ([adhan](https://github.com/batoulapps/adhan-js) kütüphanesinin "Turkey" yöntemi) bilgisayarda hesaplanır. Diyanet'in yayımladığı tablolarla aralarında **1–2 dakika** fark olabilir. Hicri tarih, Diyanet'in 2026–2027 dini günler takvimiyle karşılaştırılarak doğrulanmıştır.
 
+## Günün ayeti
+
+Vakitler penceresinde her gün kısa bir ayet gösterilir. Meal: **Dr. Ali Özek ve arkadaşları**, [QuranEnc.com](https://quranenc.com/tr/browse/turkish_shahin) (turkish_shahin, v1.0.0). Bu metinler GPL kapsamında değildir; QuranEnc.com'un yeniden yayın şartlarına tabidir (metin değiştirilmez, kaynak ve sürüm belirtilir, yanında uygunsuz reklam gösterilmez). Ayetler `src/icerik.js` dosyasında, bölünmeden ve birebir yer alır.
+
 ## Gizlilik
 
 Uygulama hiçbir veri toplamaz, hiçbir sunucuya bağlanmaz. Ayarlar sadece senin bilgisayarında saklanır.

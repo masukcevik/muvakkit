@@ -230,5 +230,6 @@ function renderVerse() {
   $('vTag').textContent = verseOffset === 0 ? (item.tur === 'hadis' ? 'Günün hadisi' : 'Günün ayeti') : (item.tur === 'hadis' ? 'Hadis' : 'Ayet');
   $('vText').textContent = item.metin;
   $('vSrc').textContent = item.kaynak;
+  $('vAttr').textContent = window.ICERIK_KAYNAK || '';
 }
 $('vNext').addEventListener('click', () => { verseOffset++; renderVerse(); });

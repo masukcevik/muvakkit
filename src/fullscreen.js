@@ -5,6 +5,7 @@
 // Diğer sistemlerde her zaman false döner.
 let check = () => false;
 let sample = () => null;
+let leftDown = () => null;
 
 if (process.platform === 'win32') {
   try {
@@ -74,15 +75,23 @@ if (process.platform === 'win32') {
       } finally { ReleaseDC(null, dc); }
       return n ? { r: Math.round(R / n), g: Math.round(G / n), b: Math.round(B / n) } : null;
     };
+
+    // Farenin sol tuşu şu an basılı mı? (sürüklemenin bırakıldığı anı kaçırmamak için)
+    const GetAsyncKeyState = user32.func('int16 __stdcall GetAsyncKeyState(int vKey)');
+    const VK_LBUTTON = 0x01;
+    leftDown = () => (GetAsyncKeyState(VK_LBUTTON) & 0x8000) !== 0;
   } catch (e) {
     console.error('Tam ekran algılama kullanılamıyor:', e && e.message);
     check = () => false;
     sample = () => null;
+    leftDown = () => null;
   }
 }
 
 module.exports = {
   isFullscreenActive() { try { return !!check(); } catch { return false; } },
   // rect: fiziksel piksel cinsinden {x, y, width, height}; Windows dışında null döner
-  sampleAround(rect) { try { return sample(rect); } catch { return null; } }
+  sampleAround(rect) { try { return sample(rect); } catch { return null; } },
+  // true/false: sol tuş durumu (Windows); null: bilinmiyor (diğer sistemler)
+  isLeftButtonDown() { try { return leftDown(); } catch { return null; } }
 };

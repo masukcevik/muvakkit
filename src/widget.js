@@ -138,24 +138,30 @@ pill.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return;
   if (clickThrough() && !mod(e)) return;
   down = { x: e.screenX, y: e.screenY }; moved = false; dragging = true;
-  pill.setPointerCapture(e.pointerId);
-  window.api.dragStart();
+  try { pill.setPointerCapture(e.pointerId); } catch {}
+  window.api.dragStart(); // taşıma ana süreçte, farenin gerçek konumuna göre yapılır
 });
 pill.addEventListener('pointermove', (e) => {
   if (!down) return;
-  const dx = e.screenX - down.x, dy = e.screenY - down.y;
-  if (!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
-  if (moved) window.api.dragMove(dx, dy);
+  if (!moved && Math.abs(e.screenX - down.x) + Math.abs(e.screenY - down.y) > 4) moved = true;
 });
-pill.addEventListener('pointerup', (e) => {
+function endPointer(e, canceled) {
   if (!down) return;
-  pill.releasePointerCapture(e.pointerId);
+  try { pill.releasePointerCapture(e.pointerId); } catch {}
   const wasMove = moveMode;
-  if (moved) window.api.dragEnd();
-  else if (!wasMove && lastW && lastW.clickThrough) window.api.openPanel(); // Ctrl + tık
+  window.api.dragEnd();
+  if (!canceled && !moved && !wasMove && lastW && lastW.clickThrough) window.api.openPanel(); // Ctrl + tık
   if (wasMove) window.api.endMoveMode();
   down = null; dragging = false;
   refreshHover(e);
+}
+pill.addEventListener('pointerup', (e) => endPointer(e, false));
+pill.addEventListener('pointercancel', (e) => endPointer(e, true));
+pill.addEventListener('lostpointercapture', (e) => { if (down) endPointer(e, true); });
+// Ana süreç sürüklemeyi bitirdiyse (tuş bırakıldı) burada da sıfırla
+window.api.onDragEnded((wasMoved) => {
+  if (wasMoved) moved = true;
+  if (down) { const wasMove = moveMode; down = null; dragging = false; if (wasMove) window.api.endMoveMode(); }
 });
 pill.addEventListener('dblclick', () => {
   if (lastW && !lastW.clickThrough && !moveMode) window.api.openPanel();
