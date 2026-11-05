@@ -92,7 +92,7 @@ function render(st) {
   }
   if (moveMode) { titleEl.textContent = 'Sürükleyip bırak'; subEl.textContent = 'Yeni yerine taşı'; subEl.classList.remove('hidden'); }
   pill.title = w.clickThrough
-    ? `${st.tooltip}\nCtrl + tık: vakitler · Ctrl + sürükle: taşı`
+    ? `${st.tooltip}\n${KEY} + tık: vakitler · ${KEY} + sürükle: taşı`
     : `${st.tooltip}\nÇift tık: vakitler · Sürükle: taşı`;
 }
 
@@ -112,6 +112,8 @@ closeBtn.addEventListener('click', (e) => { e.stopPropagation(); window.api.dism
 // Varsayılan: tıklamalar göstergenin arkasındaki pencereye geçer.
 // Ctrl basılıyken: Ctrl + tık = vakitler penceresi, Ctrl + sürükle = taşı.
 // "Arkaya geçsin" kapalıysa: sürükle = taşı, çift tık = vakitler penceresi.
+const IS_MAC = /Mac/.test(navigator.userAgent);
+const KEY = IS_MAC ? '⌘' : 'Ctrl';
 let interactive = null, dragging = false, down = null, moved = false;
 const mod = (e) => e.ctrlKey || e.metaKey;
 const clickThrough = () => (!!(lastW && lastW.clickThrough) || fsActive) && !moveMode;
@@ -133,6 +135,9 @@ document.addEventListener('mouseleave', () => {
   pill.classList.remove('ghost', 'active');
   if (clickThrough()) setInteractive(false);
 });
+
+// Mac'te Ctrl + tık sağ tık menüsü açmak ister; engelle
+document.addEventListener('contextmenu', (e) => e.preventDefault());
 
 pill.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return;

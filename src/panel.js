@@ -173,7 +173,7 @@ function renderCustom() {
   $('fullscreenShowEntered').checked = w.fullscreenShowEntered;
   $('fullscreenShowEntered').disabled = w.fullscreenMode === 'normal';
   $('ctHint').textContent = w.clickThrough
-    ? 'Göstergeyle işlem yapmak için Ctrl tuşunu basılı tut: Ctrl + tık vakitleri açar, Ctrl + sürükle taşır.'
+    ? (/Mac/.test(navigator.userAgent) ? 'Göstergeyle işlem yapmak için ⌘ (Command) tuşunu basılı tut: ⌘ + tık vakitleri açar, ⌘ + sürükle taşır.' : 'Göstergeyle işlem yapmak için Ctrl tuşunu basılı tut: Ctrl + tık vakitleri açar, Ctrl + sürükle taşır.')
     : 'Gösterge tıklamaları yakalar: çift tık vakitleri açar, sürükle taşır.';
   $('line1').value = w.line1; $('line2').value = w.line2;
   $('approachMin').value = String(w.approachMin);
