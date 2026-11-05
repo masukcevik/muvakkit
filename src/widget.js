@@ -149,6 +149,7 @@ pill.addEventListener('pointerdown', (e) => {
 pill.addEventListener('pointermove', (e) => {
   if (!down) return;
   if (!moved && Math.abs(e.screenX - down.x) + Math.abs(e.screenY - down.y) > 4) moved = true;
+  window.api.dragMove(); // ana süreç konumu hemen günceller (akıcı taşıma)
 });
 function endPointer(e, canceled) {
   if (!down) return;

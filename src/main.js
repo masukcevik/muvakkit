@@ -81,6 +81,19 @@ function applyAutoStart() {
 }
 
 // Windows bildirimleri için Başlat menüsü kısayolu
+// Windows bildirimlerinde "Electron" yerine uygulamanın adı ve simgesi görünsün
+function registerNotificationIdentity() {
+  if (process.platform !== 'win32' || IS_STORE) return;
+  try {
+    const icon = path.join(app.getPath('userData'), 'bildirim-simgesi.png');
+    if (!fs.existsSync(icon)) fs.writeFileSync(icon, fs.readFileSync(path.join(__dirname, 'icons', 'icon.png')));
+    const key = `HKCU\\Software\\Classes\\AppUserModelId\\${AUMID}`;
+    const { execFile } = require('child_process');
+    execFile('reg', ['add', key, '/v', 'DisplayName', '/t', 'REG_SZ', '/d', 'Namaz Vakti', '/f'], { windowsHide: true }, () => {});
+    execFile('reg', ['add', key, '/v', 'IconUri', '/t', 'REG_SZ', '/d', icon, '/f'], { windowsHide: true }, () => {});
+  } catch {}
+}
+
 function ensureStartMenuShortcut() {
   if (process.platform !== 'win32' || IS_STORE) return;
   try {
@@ -385,26 +398,41 @@ function finishDrag() {
   }
   lastSample = null; setTimeout(checkBackground, 150);
 }
+// Göstergeyi farenin gerçek konumuna taşı. Fare her kıpırdadığında (göstergeden gelen
+// olayla) hemen çağrılır; böylece ekranın yenilenme hızında, akıcı bir taşıma olur.
+function dragStep() {
+  if (!drag || !widget || widget.isDestroyed()) return;
+  const c = screen.getCursorScreenPoint();
+  const dx = c.x - drag.cursor.x, dy = c.y - drag.cursor.y;
+  if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+  if (!drag.moved) return;
+  const nb = clampToWorkArea({ ...drag.bounds, x: drag.bounds.x + dx, y: drag.bounds.y + dy });
+  if (nb.x === drag.lastX && nb.y === drag.lastY) return;
+  drag.lastX = nb.x; drag.lastY = nb.y;
+  widget.setPosition(nb.x, nb.y);
+  // Farklı ölçekli bir ekrana geçerken boyut değişirse eski boyuta geri al
+  const [w, h] = widget.getSize();
+  if (w !== drag.bounds.width || h !== drag.bounds.height) {
+    widget.setBounds({ x: nb.x, y: nb.y, width: drag.bounds.width, height: drag.bounds.height });
+  }
+}
 ipcMain.on('drag-start', () => {
   if (!widget) return;
   if (drag) clearInterval(drag.timer);
-  drag = { bounds: widget.getBounds(), cursor: screen.getCursorScreenPoint(), moved: false, started: Date.now() };
+  drag = { bounds: widget.getBounds(), cursor: screen.getCursorScreenPoint(), moved: false, started: Date.now(), lastX: null, lastY: null };
+  // Yedek döngü: tuşun bırakıldığını yakalar, olay gelmezse de konumu günceller
   drag.timer = setInterval(() => {
     if (!drag || !widget || widget.isDestroyed()) return finishDrag();
-    // Tuş bırakıldıysa (Windows) ya da bilinmeyen durumda 2 dk geçtiyse bitir
     const btn = isLeftButtonDown();
     if (btn === false || Date.now() - drag.started > 120000) return finishDrag();
-    const c = screen.getCursorScreenPoint();
-    const dx = c.x - drag.cursor.x, dy = c.y - drag.cursor.y;
-    if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
-    if (!drag.moved) return;
-    const nb = clampToWorkArea({ ...drag.bounds, x: drag.bounds.x + dx, y: drag.bounds.y + dy });
-    const [px, py] = widget.getPosition();
-    // Boyutu sabit tutarak taşı (farklı ölçekli ekranlar arasında büyüyüp küçülmesin)
-    if (px !== nb.x || py !== nb.y) widget.setBounds({ x: nb.x, y: nb.y, width: drag.bounds.width, height: drag.bounds.height });
+    dragStep();
   }, 16);
 });
-ipcMain.on('drag-move', () => {}); // konum artık yukarıda, ana süreçte hesaplanıyor
+ipcMain.on('drag-move', () => {
+  if (!drag) return;
+  if (isLeftButtonDown() === false) return finishDrag();
+  dragStep();
+});
 ipcMain.on('drag-end', () => finishDrag());
 
 // ---------- Başlat ----------
@@ -416,6 +444,7 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin' && app.dock) app.dock.hide(); // Dock'ta değil, menü çubuğunda dursun
   loadSettings();
   ensureStartMenuShortcut();
+  registerNotificationIdentity();
   applyAutoStart();
   createTray();
   createWidget();

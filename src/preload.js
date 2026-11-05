@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('api', {
   startMoveMode: () => ipcRenderer.send('start-move-mode'),
   widgetSize: (w, h) => ipcRenderer.send('widget-size', w, h),
   dragStart: () => ipcRenderer.send('drag-start'),
-  dragMove: (dx, dy) => ipcRenderer.send('drag-move', dx, dy),
+  dragMove: () => ipcRenderer.send('drag-move'),
   dragEnd: () => ipcRenderer.send('drag-end'),
   onDragEnded: (cb) => ipcRenderer.on('drag-ended', (_e, m) => cb(m))
 });
