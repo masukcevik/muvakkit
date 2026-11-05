@@ -16,6 +16,11 @@ on:
         type: boolean
         default: false
 
+# Aynı anda iki derleme başlarsa eskisini iptal et (gereksiz taslak oluşmasın)
+concurrency:
+  group: surum-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write       # Releases sayfasına dosya yüklemek için
   id-token: write       # kaynak doğrulama (attestation) için
