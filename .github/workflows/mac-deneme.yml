@@ -1,5 +1,7 @@
-# macOS deneme paketi (Apple geliştirici hesabı olmadan, ad-hoc imzalı).
+# macOS deneme paketleri (Apple geliştirici hesabı olmadan, ad-hoc imzalı).
 # Sonuç: Releases sayfasında "mac-deneme" adlı taslak; yalnızca depo sahibi görür.
+#  - Yeni Mac'ler (macOS 12 ve üstü): arm64 + x64
+#  - Eski Mac'ler (Intel, macOS 10.13 – 11): Electron 26 ile x64
 name: macOS deneme
 
 on:
@@ -27,11 +29,20 @@ jobs:
           cache: npm
       - run: npm ci
       # identity "-" = ad-hoc imza: sertifika gerektirmez, Apple Silicon'da "hasarlı" uyarısını önler
-      - name: macOS paketi (ad-hoc imzalı)
+      - name: Yeni Mac'ler için (macOS 12+)
         run: >-
           npx electron-builder --mac dmg --arm64 --x64 --publish never
           "-c.mac.identity=-" -c.mac.hardenedRuntime=false
           "-c.dmg.artifactName=NamazVakti-Mac-DENEME-\${version}-\${arch}.\${ext}"
+      - name: Eski Intel Mac'ler için (macOS 10.13+, Electron 26)
+        run: |
+          npm install --no-save electron@26.6.10
+          npx electron-builder --mac dmg --x64 --publish never \
+            -c.electronVersion=26.6.10 \
+            "-c.mac.identity=-" -c.mac.hardenedRuntime=false \
+            -c.mac.minimumSystemVersion=10.13 \
+            -c.directories.output=dist-eski \
+            "-c.dmg.artifactName=NamazVakti-Mac-ESKI-Intel-DENEME-\${version}.\${ext}"
       - name: Sürüm
         id: v
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
@@ -42,5 +53,11 @@ jobs:
           tag_name: mac-deneme-${{ steps.v.outputs.version }}
           target_commitish: ${{ github.sha }}
           name: macOS deneme ${{ steps.v.outputs.version }} (imzasız)
-          body: Apple geliştirici hesabı olmadan derlenmiş deneme paketi. Yayınlamayın.
-          files: dist/*.dmg
+          body: |
+            Apple geliştirici hesabı olmadan derlenmiş deneme paketleri. Yayınlamayın.
+            - arm64: Apple çipli Mac'ler (M1–M4), macOS 12+
+            - x64: Intel Mac'ler, macOS 12+
+            - ESKI-Intel: 2017 ve öncesi Intel Mac'ler, macOS 10.13 – 11
+          files: |
+            dist/*.dmg
+            dist-eski/*.dmg
