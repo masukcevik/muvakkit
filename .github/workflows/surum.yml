@@ -1,3 +1,4 @@
+# Muvakkit sürüm derlemesi (Windows: kurulum, zip, Store paketi)
 # Yeni sürüm: package.json'daki sürüm numarası değişip main dalına gönderilince
 # (ya da Actions sekmesinden elle çalıştırılınca) Windows ve macOS paketlerini
 # GitHub'ın kendi sunucularında derler, kaynağını doğrulanabilir şekilde işaretler ve
