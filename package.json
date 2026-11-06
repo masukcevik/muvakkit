@@ -82,7 +82,7 @@
         "tr-TR"
       ],
       "addAutoLaunchExtension": true,
-      "backgroundColor": "#4C000F",
+      "backgroundColor": "#170E0F",
       "artifactName": "Muvakkit-Store-${version}.${ext}"
     },
     "mac": {
