@@ -267,7 +267,7 @@ function createWidget() {
 function createPanel() {
   panel = new BrowserWindow({
     width: PANEL_W, height: PANEL_H, frame: false, resizable: false,
-    skipTaskbar: true, show: false, alwaysOnTop: true, backgroundColor: '#181C20',
+    skipTaskbar: true, show: false, alwaysOnTop: true, transparent: true, backgroundColor: '#00000000', hasShadow: false,
     title: 'Muvakkit', webPreferences: commonPrefs
   });
   panel.loadFile(path.join(__dirname, 'panel.html'));
