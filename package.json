@@ -5,10 +5,10 @@
   "description": "Çalışırken namaz vakitlerini sessizce gösteren, reklamsız ve ücretsiz masaüstü uygulaması",
   "author": "Maşuk",
   "license": "GPL-3.0-or-later",
-  "homepage": "https://github.com/masukcevik/namaz-vakti",
+  "homepage": "https://github.com/masukcevik/muvakkit",
   "repository": {
     "type": "git",
-    "url": "https://github.com/masukcevik/namaz-vakti.git"
+    "url": "https://github.com/masukcevik/muvakkit.git"
   },
   "main": "src/main.js",
   "scripts": {

@@ -32,10 +32,10 @@ Uygulama ücretsiz ve reklamsızdır. Hesap gerektirmez, internete bağlanmaz ve
 **Kategori:** Yaşam tarzı (Lifestyle)
 
 **Gizlilik politikası adresi:**
-https://github.com/masukcevik/namaz-vakti/blob/main/GIZLILIK.md
+https://github.com/masukcevik/muvakkit/blob/main/GIZLILIK.md
 
 **Web sitesi / destek:**
-https://github.com/masukcevik/namaz-vakti
+https://github.com/masukcevik/muvakkit
 
 **runFullTrust gerekçesi (Submission options → Restricted capabilities):**
-Muvakkit is an Electron desktop application packaged as MSIX. It requires runFullTrust because it runs as a standard Win32 desktop process: it shows a small always-on-top overlay window with the next prayer time, a system tray icon, and Windows toast notifications when a prayer time begins. It also reads the foreground window state (via user32/shell32) solely to dim the overlay while a full-screen game or video is running. The app does not access the network, files, camera, microphone, or location, and collects no personal data. Source code: https://github.com/masukcevik/namaz-vakti
+Muvakkit is an Electron desktop application packaged as MSIX. It requires runFullTrust because it runs as a standard Win32 desktop process: it shows a small always-on-top overlay window with the next prayer time, a system tray icon, and Windows toast notifications when a prayer time begins. It also reads the foreground window state (via user32/shell32) solely to dim the overlay while a full-screen game or video is running. The app does not access the network, files, camera, microphone, or location, and collects no personal data. Source code: https://github.com/masukcevik/muvakkit

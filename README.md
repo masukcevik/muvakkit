@@ -44,7 +44,7 @@ Uygulama hiçbir veri toplamaz, hiçbir sunucuya bağlanmaz. Ayarlar sadece seni
 Releases sayfasındaki her dosya, GitHub'ın sunucularında doğrudan bu depodaki koddan derlenir ve kaynağı işaretlenir (build provenance). Bir dosyanın değiştirilmediğini [GitHub CLI](https://cli.github.com) ile kontrol edebilirsin:
 
 ```
-gh attestation verify Muvakkit-Kurulum-1.0.0.exe --repo masukcevik/namaz-vakti
+gh attestation verify Muvakkit-Kurulum-1.0.0.exe --repo masukcevik/muvakkit
 ```
 
 Uygulamayı yalnızca bu deponun Releases sayfasından ya da Microsoft Store'dan indir.

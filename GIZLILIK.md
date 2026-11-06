@@ -9,4 +9,4 @@ Muvakkit **hiçbir kişisel veri toplamaz, saklamaz ya da paylaşmaz.**
 - Seçtiğin şehir ve görünüm ayarları yalnızca kendi bilgisayarında, uygulamanın ayar dosyasında saklanır. Uygulamayı kaldırdığında bu dosya da silinebilir.
 - Uygulama kamera, mikrofon, konum ya da dosyalarına erişmez. Kullandığı tek izin bildirim göstermektir.
 
-Sorular için: https://github.com/masukcevik/namaz-vakti/issues
+Sorular için: https://github.com/masukcevik/muvakkit/issues
