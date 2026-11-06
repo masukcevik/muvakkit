@@ -1,4 +1,4 @@
-# macOS deneme paketleri (Apple geliştirici hesabı olmadan, ad-hoc imzalı).
+# macOS deneme paketleri (Apple geliştirici hesabı olmadan, ad-hoc imzalı) — Muvakkit
 # Sonuç: Releases sayfasında "mac-deneme" adlı taslak; yalnızca depo sahibi görür.
 #  - Yeni Mac'ler (macOS 12 ve üstü): arm64 + x64
 #  - Eski Mac'ler (Intel, macOS 10.11+): Electron 22 ile x64
