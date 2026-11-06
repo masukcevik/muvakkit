@@ -1,4 +1,6 @@
-# Namaz Vakti
+# Muvakkit
+
+_(eski adıyla Namaz Vakti)_
 
 Çalışırken, ders çalışırken ya da başka bir işle meşgulken namaz vakitlerini ekranın köşesinde sessizce gösteren masaüstü uygulaması.
 
@@ -19,9 +21,9 @@ En son sürüm [Releases](../../releases) sayfasında:
 
 | Dosya | Ne için |
 |---|---|
-| `NamazVakti-Kurulum-x.y.z.exe` | Windows kurulum dosyası (önerilen) |
-| `NamazVakti-Windows-x.y.z.zip` | Kurulum gerektirmeyen Windows sürümü |
-| `NamazVakti-macOS-...dmg` | macOS (deneme aşamasında) |
+| `Muvakkit-Kurulum-x.y.z.exe` | Windows kurulum dosyası (önerilen) |
+| `Muvakkit-Windows-x.y.z.zip` | Kurulum gerektirmeyen Windows sürümü |
+| `Muvakkit-macOS-...dmg` | macOS (deneme aşamasında) |
 
 > **Windows uyarısı:** Uygulama henüz dijital olarak imzalanmadığı için Windows "Bilgisayarınız korundu" uyarısı gösterebilir. "Ek bilgi" ve ardından "Yine de çalıştır" seçeneğiyle açabilirsin. Microsoft Store sürümü hazırlanıyor. O sürümde bu uyarı çıkmayacak.
 
@@ -42,7 +44,7 @@ Uygulama hiçbir veri toplamaz, hiçbir sunucuya bağlanmaz. Ayarlar sadece seni
 Releases sayfasındaki her dosya, GitHub'ın sunucularında doğrudan bu depodaki koddan derlenir ve kaynağı işaretlenir (build provenance). Bir dosyanın değiştirilmediğini [GitHub CLI](https://cli.github.com) ile kontrol edebilirsin:
 
 ```
-gh attestation verify NamazVakti-Kurulum-1.0.0.exe --repo masukcevik/namaz-vakti
+gh attestation verify Muvakkit-Kurulum-1.0.0.exe --repo masukcevik/namaz-vakti
 ```
 
 Uygulamayı yalnızca bu deponun Releases sayfasından ya da Microsoft Store'dan indir.

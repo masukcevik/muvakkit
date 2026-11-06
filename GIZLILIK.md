@@ -1,8 +1,8 @@
-# Gizlilik Politikası — Namaz Vakti
+# Gizlilik Politikası — Muvakkit
 
 Son güncelleme: 4 Kasım 2026
 
-Namaz Vakti **hiçbir kişisel veri toplamaz, saklamaz ya da paylaşmaz.**
+Muvakkit **hiçbir kişisel veri toplamaz, saklamaz ya da paylaşmaz.**
 
 - Uygulama internete bağlanmaz. Namaz vakitleri ve Hicri tarih bilgisayarında hesaplanır.
 - Hesap, kayıt, reklam, analiz ya da takip yoktur.

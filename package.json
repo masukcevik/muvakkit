@@ -1,7 +1,7 @@
 {
   "name": "namaz-vakti",
-  "productName": "Namaz Vakti",
-  "version": "1.1.1",
+  "productName": "Muvakkit",
+  "version": "1.2.0",
   "description": "Çalışırken namaz vakitlerini sessizce gösteren, reklamsız ve ücretsiz masaüstü uygulaması",
   "author": "Maşuk",
   "license": "GPL-3.0-or-later",
@@ -25,7 +25,7 @@
   },
   "build": {
     "appId": "com.namazvakti.app",
-    "productName": "Namaz Vakti",
+    "productName": "Muvakkit",
     "copyright": "Copyright (C) 2026 Maşuk — GPL-3.0-or-later",
     "directories": {
       "buildResources": "build",
@@ -60,7 +60,7 @@
         }
       ],
       "icon": "build/icon.ico",
-      "artifactName": "NamazVakti-Windows-${version}.${ext}"
+      "artifactName": "Muvakkit-Windows-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -71,19 +71,19 @@
         "tr_TR"
       ],
       "language": "1055",
-      "artifactName": "NamazVakti-Kurulum-${version}.${ext}",
+      "artifactName": "Muvakkit-Kurulum-${version}.${ext}",
       "createStartMenuShortcut": true,
-      "shortcutName": "Namaz Vakti"
+      "shortcutName": "Muvakkit"
     },
     "appx": {
       "applicationId": "NamazVakti",
-      "displayName": "Namaz Vakti Göstergesi",
+      "displayName": "Muvakkit",
       "languages": [
         "tr-TR"
       ],
       "addAutoLaunchExtension": true,
-      "backgroundColor": "#1F4D41",
-      "artifactName": "NamazVakti-Store-${version}.${ext}"
+      "backgroundColor": "#4C000F",
+      "artifactName": "Muvakkit-Store-${version}.${ext}"
     },
     "mac": {
       "target": [
@@ -100,7 +100,7 @@
       "extendInfo": {
         "LSUIElement": true
       },
-      "artifactName": "NamazVakti-macOS-${version}-${arch}.${ext}"
+      "artifactName": "Muvakkit-macOS-${version}-${arch}.${ext}"
     }
   }
 }

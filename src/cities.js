@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Namaz Vakti — Copyright (C) 2026 Maşuk
+// Muvakkit — Copyright (C) 2026 Maşuk
 // Türkiye'nin 81 ili — il merkezi koordinatları (yaklaşık)
 module.exports = [
   ['Adana', 37.00, 35.32], ['Adıyaman', 37.76, 38.28], ['Afyonkarahisar', 38.76, 30.54],

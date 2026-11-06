@@ -33,7 +33,7 @@ jobs:
         run: >-
           npx electron-builder --mac dmg --arm64 --x64 --publish never
           "-c.mac.identity=-" -c.mac.hardenedRuntime=false
-          "-c.dmg.artifactName=NamazVakti-Mac-DENEME-\${version}-\${arch}.\${ext}"
+          "-c.dmg.artifactName=Muvakkit-Mac-DENEME-\${version}-\${arch}.\${ext}"
       - name: Sürüm
         id: v
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
@@ -70,7 +70,7 @@ jobs:
             "-c.mac.identity=-" -c.mac.hardenedRuntime=false \
             -c.mac.minimumSystemVersion=10.11 \
             -c.directories.output=dist-eski \
-            "-c.mac.artifactName=NamazVakti-Mac-Eski-10.11-DENEME.\${ext}" "-c.dmg.artifactName=NamazVakti-Mac-Eski-10.11-DENEME.\${ext}"
+            "-c.mac.artifactName=Muvakkit-Mac-Eski-10.11-DENEME.\${ext}" "-c.dmg.artifactName=Muvakkit-Mac-Eski-10.11-DENEME.\${ext}"
       - name: Sürüm
         id: v
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
@@ -104,7 +104,7 @@ jobs:
             "-c.mac.identity=-" -c.mac.hardenedRuntime=false \
             -c.mac.minimumSystemVersion=11.0 \
             -c.directories.output=dist-bigsur \
-            "-c.mac.artifactName=NamazVakti-Mac-M1-BigSur-DENEME.\${ext}" "-c.dmg.artifactName=NamazVakti-Mac-M1-BigSur-DENEME.\${ext}"
+            "-c.mac.artifactName=Muvakkit-Mac-M1-BigSur-DENEME.\${ext}" "-c.dmg.artifactName=Muvakkit-Mac-M1-BigSur-DENEME.\${ext}"
       - name: Sürüm
         id: v
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"

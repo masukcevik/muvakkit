@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Namaz Vakti — Copyright (C) 2026 Maşuk
+// Muvakkit — Copyright (C) 2026 Maşuk
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {

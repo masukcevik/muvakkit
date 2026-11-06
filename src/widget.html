@@ -1,14 +1,14 @@
 <!doctype html>
-<!-- SPDX-License-Identifier: GPL-3.0-or-later — Namaz Vakti, Copyright (C) 2026 Maşuk -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later — Muvakkit, Copyright (C) 2026 Maşuk -->
 <html lang="tr">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
-<title>Namaz Vakti</title>
+<title>Muvakkit</title>
 <style>
   :root {
-    --s: 1; --bg: rgba(20,24,28,0.8); --text: #F2F4F5; --sub: rgba(242,244,245,0.72);
-    --accent: #8FD1B9; --entered: #1F4D41; --shadow: none; --line: rgba(242,244,245,0.08); --radius: 12px;
+    --s: 1; --bg: rgba(26,17,17,0.8); --text: #F8F1ED; --sub: rgba(248,241,237,0.72);
+    --accent: #F3E6D0; --entered: #4C000F; --shadow: none; --line: rgba(248,241,237,0.08); --radius: 12px;
   }
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; }
   body { font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif; display: flex; align-items: flex-end; justify-content: flex-end; }
@@ -44,7 +44,7 @@
 </head>
 <body>
   <div class="pill" id="pill">
-    <svg class="moon" viewBox="0 0 24 24" fill="none" style="stroke: var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M74 -328Q74 -283 71.0 -235.5Q68 -188 62 -138Q57 -87 54.0 -52.5Q51 -18 51 0Q51 14 61.5 43.5Q72 73 93 118Q96 123 117.0 129.0Q138 135 169.0 140.5Q200 146 234.0 150.0Q268 154 297.5 156.5Q327 159 343 159L324 180Q296 211 275.5 238.5Q255 266 231 266Q208 266 186.0 249.0Q164 232 140 198L99 219Q128 293 168.5 338.0Q209 383 250 383Q274 383 296.0 365.0Q318 347 348 304Q380 257 408.5 224.5Q437 192 468 170L422 51Q381 51 334.5 48.0Q288 45 244.5 39.5Q201 34 167.0 27.5Q133 21 115 15Q121 -13 127.0 -41.0Q133 -69 139 -97Q148 -140 157.0 -184.0Q166 -228 175 -272Q149 -291 124.0 -305.0Q99 -319 74 -328Z" style="fill: var(--accent)" transform="translate(12,12) scale(0.02903,-0.02903) translate(-259.5,-27.5)"/></svg>
     <div class="texts">
       <span class="title" id="title">…</span>
       <span class="sub" id="sub"></span>

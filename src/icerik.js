@@ -1,4 +1,4 @@
-// Namaz Vakti — günün ayeti içeriği
+// Muvakkit — günün ayeti içeriği
 // Meal: Dr. Ali Özek ve arkadaşları — QuranEnc.com, turkish_shahin v1.0.0
 // https://quranenc.com/tr/browse/turkish_shahin
 // Bu metinler GPL kapsamında DEĞİLDİR; QuranEnc.com'un yeniden yayın şartlarına tabidir:

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Namaz Vakti — Copyright (C) 2026 Maşuk
+// Muvakkit — Copyright (C) 2026 Maşuk
 // Namaz vakti hesaplama ve gösterge durumu (Electron'dan bağımsız, test edilebilir)
 const adhan = require('adhan');
 const CITIES = require('./cities');

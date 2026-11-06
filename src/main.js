@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Namaz Vakti — Copyright (C) 2026 Maşuk
+// Muvakkit (eski adıyla Namaz Vakti) — Copyright (C) 2026 Maşuk
 const { app, BrowserWindow, Tray, Menu, Notification, ipcMain, screen, nativeImage, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
@@ -14,6 +14,8 @@ const IS_STORE = !!process.windowsStore;
 
 // ---------- Bellek tasarrufu ----------
 // Küçük bir gösterge için ekran kartı hızlandırmasına gerek yok: ayrı GPU süreci açılmaz
+// Uygulamanın adı "Muvakkit" oldu; ayarlar eski "Namaz Vakti" klasöründe kalmaya devam etsin
+app.setPath('userData', path.join(app.getPath('appData'), 'Namaz Vakti'));
 app.disableHardwareAcceleration();
 app.commandLine.appendSwitch('disable-features', 'SpareRendererForSitePerProcess,HardwareMediaKeyHandling,MediaSessionService,Translate');
 
@@ -31,7 +33,7 @@ let panelPinned = false;
 const settingsPath = () => path.join(app.getPath('userData'), 'ayarlar.json');
 
 const WIDGET_DEFAULTS = {
-  bg: '#14181C', text: '#F2F4F5', accent: '#8FD1B9', entered: '#1F4D41',
+  bg: '#1A1111', text: '#F8F1ED', accent: '#F3E6D0', entered: '#4C000F',
   opacity: 80, size: 'normal', radius: 12, icon: true,
   line1: 'vakit-saat', line2: 'kalan',
   approachMin: 10, enteredMin: 5,
@@ -68,6 +70,11 @@ function loadSettings() {
   try { settings = { ...DEFAULTS, ...JSON.parse(fs.readFileSync(settingsPath(), 'utf8')) }; }
   catch { settings = { ...DEFAULTS }; }
   settings.widget = cleanWidget(settings.widget);
+  // Eski varsayılan yeşil renkleri hiç değiştirmemiş kullanıcıları yeni kızıl temaya geçir
+  const w = settings.widget;
+  if (w.bg.toUpperCase() === '#14181C' && w.text.toUpperCase() === '#F2F4F5' && w.accent.toUpperCase() === '#8FD1B9' && w.entered.toUpperCase() === '#1F4D41') {
+    Object.assign(w, { bg: '#1A1111', text: '#F8F1ED', accent: '#F3E6D0', entered: '#4C000F' });
+  }
 }
 function saveSettings() {
   try { fs.mkdirSync(path.dirname(settingsPath()), { recursive: true }); fs.writeFileSync(settingsPath(), JSON.stringify(settings, null, 2)); } catch {}
@@ -89,7 +96,7 @@ function registerNotificationIdentity() {
     if (!fs.existsSync(icon)) fs.writeFileSync(icon, fs.readFileSync(path.join(__dirname, 'icons', 'icon.png')));
     const key = `HKCU\\Software\\Classes\\AppUserModelId\\${AUMID}`;
     const { execFile } = require('child_process');
-    execFile('reg', ['add', key, '/v', 'DisplayName', '/t', 'REG_SZ', '/d', 'Namaz Vakti', '/f'], { windowsHide: true }, () => {});
+    execFile('reg', ['add', key, '/v', 'DisplayName', '/t', 'REG_SZ', '/d', 'Muvakkit', '/f'], { windowsHide: true }, () => {});
     execFile('reg', ['add', key, '/v', 'IconUri', '/t', 'REG_SZ', '/d', icon, '/f'], { windowsHide: true }, () => {});
   } catch {}
 }
@@ -97,20 +104,38 @@ function registerNotificationIdentity() {
 function ensureStartMenuShortcut() {
   if (process.platform !== 'win32' || IS_STORE) return;
   try {
-    const lnk = path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Namaz Vakti.lnk');
+    const dir = path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs');
+    removeOldShortcut(dir);
+    const lnk = path.join(dir, 'Muvakkit.lnk');
     shell.writeShortcutLink(lnk, fs.existsSync(lnk) ? 'replace' : 'create', {
-      target: process.execPath, appUserModelId: AUMID, description: 'Namaz Vakti'
+      target: process.execPath, appUserModelId: AUMID, description: 'Muvakkit'
     });
   } catch {}
 }
 
 // Masaüstüne kısayol (zip sürümünü kullananlar ya da simgeyi silenler için)
-function desktopShortcutPath() { return path.join(app.getPath('desktop'), 'Namaz Vakti.lnk'); }
+function desktopShortcutPath() { return path.join(app.getPath('desktop'), 'Muvakkit.lnk'); }
+// Eski isimle (Namaz Vakti) kalmış kısayollar
+// Eski kısayol bu uygulamayı gösteriyorsa siler; silindiyse true döner
+function removeOldShortcut(dir) {
+  const old = path.join(dir, 'Namaz Vakti.lnk');
+  try {
+    if (!fs.existsSync(old)) return false;
+    const t = shell.readShortcutLink(old).target || '';
+    if (t === process.execPath || /Namaz Vakti\.exe$/i.test(t)) { fs.unlinkSync(old); return true; }
+  } catch {}
+  return false;
+}
+// Masaüstündeki eski isimli kısayolu yenisiyle değiştir
+function migrateDesktopShortcut() {
+  if (process.platform !== 'win32' || IS_STORE) return;
+  if (removeOldShortcut(app.getPath('desktop'))) createDesktopShortcut();
+}
 function createDesktopShortcut() {
   if (process.platform !== 'win32' || IS_STORE) return false;
   try {
     return shell.writeShortcutLink(desktopShortcutPath(), fs.existsSync(desktopShortcutPath()) ? 'replace' : 'create', {
-      target: process.execPath, appUserModelId: AUMID, description: 'Namaz Vakti'
+      target: process.execPath, appUserModelId: AUMID, description: 'Muvakkit'
     });
   } catch { return false; }
 }
@@ -230,7 +255,7 @@ function createWidget() {
   widget = new BrowserWindow({
     ...b, frame: false, transparent: true, resizable: false, movable: true,
     alwaysOnTop: true, skipTaskbar: true, focusable: false, hasShadow: false,
-    show: false, title: 'Namaz Vakti', webPreferences: commonPrefs
+    show: false, title: 'Muvakkit', webPreferences: commonPrefs
   });
   widget.setAlwaysOnTop(true, 'screen-saver');
   widget.setVisibleOnAllWorkspaces(true);
@@ -243,7 +268,7 @@ function createPanel() {
   panel = new BrowserWindow({
     width: PANEL_W, height: PANEL_H, frame: false, resizable: false,
     skipTaskbar: true, show: false, alwaysOnTop: true, backgroundColor: '#181C20',
-    title: 'Namaz Vakti', webPreferences: commonPrefs
+    title: 'Muvakkit', webPreferences: commonPrefs
   });
   panel.loadFile(path.join(__dirname, 'panel.html'));
   panel.on('blur', () => { if (panel && panel.isVisible() && !panelPinned) panel.hide(); });
@@ -306,7 +331,7 @@ function createTray() {
   const icon = nativeImage.createFromPath(path.join(__dirname, 'icons', file));
   if (process.platform === 'darwin') icon.setTemplateImage(true);
   tray = new Tray(icon);
-  tray.setToolTip('Namaz Vakti');
+  tray.setToolTip('Muvakkit');
   tray.setContextMenu(buildTrayMenu());
   tray.on('click', togglePanel);
 }
@@ -349,7 +374,7 @@ function pushState() {
     }
   }
 
-  if (tray) tray.setToolTip(`Namaz Vakti — ${st.tooltip}`);
+  if (tray) tray.setToolTip(`Muvakkit — ${st.tooltip}`);
   applyWidgetVisibility();
   for (const win of [widget, panel]) if (win && !win.isDestroyed()) win.webContents.send('state', st);
 }
@@ -445,6 +470,7 @@ app.whenReady().then(() => {
   loadSettings();
   ensureStartMenuShortcut();
   registerNotificationIdentity();
+  migrateDesktopShortcut();
   applyAutoStart();
   createTray();
   createWidget();

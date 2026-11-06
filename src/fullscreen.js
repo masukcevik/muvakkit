@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Namaz Vakti — Copyright (C) 2026 Maşuk
+// Muvakkit — Copyright (C) 2026 Maşuk
 // Tam ekran uygulama algılama (oyun, tam ekran video, sunum).
 // Windows'ta sistemin kendi bilgisini ve öndeki pencerenin ekranı kaplayıp kaplamadığını okur.
 // Diğer sistemlerde her zaman false döner.

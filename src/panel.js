@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Namaz Vakti — Copyright (C) 2026 Maşuk
+// Muvakkit — Copyright (C) 2026 Maşuk
 const $ = (id) => document.getElementById(id);
 let citiesFilled = false;
 let st = null;
@@ -66,18 +66,19 @@ function renderMain() {
 
 // ---------- Özelleştir görünümü ----------
 const PRESETS = [
-  { name: 'Koyu', bg: '#14181C', text: '#F2F4F5', accent: '#8FD1B9', entered: '#1F4D41', opacity: 80 },
-  { name: 'Açık', bg: '#FFFFFF', text: '#1C2226', accent: '#2F8F70', entered: '#CFEDE2', opacity: 92 },
+  { name: 'Kızıl', bg: '#1A1111', text: '#F8F1ED', accent: '#F3E6D0', entered: '#4C000F', opacity: 80 },
+  { name: 'Açık', bg: '#FFFFFF', text: '#2A1A18', accent: '#4C000F', entered: '#F8D9D0', opacity: 92 },
+  { name: 'Yeşil', bg: '#14181C', text: '#F2F4F5', accent: '#8FD1B9', entered: '#1F4D41', opacity: 80 },
   { name: 'Gece mavisi', bg: '#13213A', text: '#EAF0FA', accent: '#7DB4FF', entered: '#1F4E8C', opacity: 88 },
   { name: 'Toprak', bg: '#2B2420', text: '#F4EDE4', accent: '#E3A86B', entered: '#6B4A2B', opacity: 90 },
   { name: 'Mor', bg: '#221A33', text: '#F1ECFA', accent: '#C3A6FF', entered: '#4B3380', opacity: 88 },
-  { name: 'Sade', bg: '#000000', text: '#FFFFFF', accent: '#FFFFFF', entered: '#1F4D41', opacity: 35 }
+  { name: 'Sade', bg: '#000000', text: '#FFFFFF', accent: '#FFFFFF', entered: '#4C000F', opacity: 35 }
 ];
 const SWATCHES = {
-  bg: ['#14181C', '#FFFFFF', '#13213A', '#2B2420', '#221A33', '#1F4D41', '#000000', '#F4EFE6'],
-  text: ['#F2F4F5', '#1C2226', '#FFFFFF', '#000000', '#EAF0FA', '#F4EDE4', '#8FD1B9', '#FFD166'],
-  accent: ['#8FD1B9', '#2F8F70', '#7DB4FF', '#E3A86B', '#C3A6FF', '#FFD166', '#F28B82', '#FFFFFF'],
-  entered: ['#1F4D41', '#CFEDE2', '#1F4E8C', '#6B4A2B', '#4B3380', '#8A2E2E', '#2E6B5E', '#000000']
+  bg: ['#1A1111', '#14181C', '#FFFFFF', '#13213A', '#2B2420', '#221A33', '#000000', '#F4EFE6'],
+  text: ['#F8F1ED', '#2A1A18', '#FFFFFF', '#000000', '#EAF0FA', '#F4EDE4', '#8FD1B9', '#FFD166'],
+  accent: ['#F3E6D0', '#4C000F', '#8FD1B9', '#7DB4FF', '#E3A86B', '#C3A6FF', '#FFD166', '#FFFFFF'],
+  entered: ['#4C000F', '#F8D9D0', '#1F4D41', '#1F4E8C', '#6B4A2B', '#4B3380', '#000000']
 };
 const LINES = [
   ['vakit-saat', 'Vakit · saat (İkindi · 15:37)'],
