@@ -6,6 +6,7 @@
 let check = () => false;
 let sample = () => null;
 let leftDown = () => null;
+let round = () => false;
 
 if (process.platform === 'win32') {
   try {
@@ -16,6 +17,17 @@ if (process.platform === 'win32') {
     const RECT = koffi.struct('RECT', { left: 'long', top: 'long', right: 'long', bottom: 'long' });
     const MONITORINFO = koffi.struct('MONITORINFO', { cbSize: 'uint32', rcMonitor: RECT, rcWork: RECT, dwFlags: 'uint32' });
     const HANDLE = koffi.pointer('HANDLE', koffi.opaque());
+
+    // Windows 11: pencereye sistemin kendi yuvarlak köşelerini ve gölgesini ver
+    try {
+      const dwmapi = koffi.load('dwmapi.dll');
+      const DwmSetWindowAttribute = dwmapi.func('long __stdcall DwmSetWindowAttribute(HANDLE hwnd, uint32 attr, _In_ int *pv, uint32 cb)');
+      const DWMWA_WINDOW_CORNER_PREFERENCE = 33, DWMWCP_ROUND = 2;
+      round = (handleBuf) => {
+        try { return DwmSetWindowAttribute(koffi.decode(handleBuf, HANDLE), DWMWA_WINDOW_CORNER_PREFERENCE, [DWMWCP_ROUND], 4) === 0; }
+        catch { return false; }
+      };
+    } catch {}
 
     const GetForegroundWindow = user32.func('HANDLE __stdcall GetForegroundWindow()');
     const GetWindowRect = user32.func('bool __stdcall GetWindowRect(HANDLE hWnd, _Out_ RECT *lpRect)');
@@ -88,7 +100,7 @@ if (process.platform === 'win32') {
   }
 }
 
-module.exports = {
+module.exports = { roundCorners: (b) => round(b),
   isFullscreenActive() { try { return !!check(); } catch { return false; } },
   // rect: fiziksel piksel cinsinden {x, y, width, height}; Windows dışında null döner
   sampleAround(rect) { try { return sample(rect); } catch { return null; } },

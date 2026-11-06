@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Muvakkit — Copyright (C) 2026 Maşuk
+if (/Windows/.test(navigator.userAgent)) document.documentElement.classList.add('win');
 const $ = (id) => document.getElementById(id);
 let citiesFilled = false;
 let st = null;

@@ -4,7 +4,7 @@ const { app, BrowserWindow, Tray, Menu, Notification, ipcMain, screen, nativeIma
 const path = require('path');
 const fs = require('fs');
 const { buildState } = require('./vakit');
-const { isFullscreenActive, sampleAround, isLeftButtonDown } = require('./fullscreen');
+const { isFullscreenActive, sampleAround, isLeftButtonDown, roundCorners } = require('./fullscreen');
 
 const AUMID = 'com.namazvakti.app';
 const PANEL_W = 380, PANEL_H = 680;
@@ -267,9 +267,12 @@ function createWidget() {
 function createPanel() {
   panel = new BrowserWindow({
     width: PANEL_W, height: PANEL_H, frame: false, resizable: false,
-    skipTaskbar: true, show: false, alwaysOnTop: true, transparent: true, backgroundColor: '#00000000', hasShadow: false,
+    skipTaskbar: true, show: false, alwaysOnTop: true,
+    // Windows'ta köşeleri sistem yuvarlıyor (aşağıda); diğer sistemlerde saydam pencere + CSS
+    ...(process.platform === 'win32' ? { backgroundColor: '#1B1414' } : { transparent: true, hasShadow: false }),
     title: 'Muvakkit', webPreferences: commonPrefs
   });
+  if (process.platform === 'win32') roundCorners(panel.getNativeWindowHandle());
   panel.loadFile(path.join(__dirname, 'panel.html'));
   panel.on('blur', () => { if (panel && panel.isVisible() && !panelPinned) panel.hide(); });
   panel.on('hide', () => {
