@@ -92,8 +92,15 @@ function applyAutoStart() {
 function registerNotificationIdentity() {
   if (process.platform !== 'win32' || IS_STORE) return;
   try {
-    const icon = path.join(app.getPath('userData'), 'bildirim-simgesi.png');
-    if (!fs.existsSync(icon)) fs.writeFileSync(icon, fs.readFileSync(path.join(__dirname, 'icons', 'icon.png')));
+    // Simge değişince dosya adı da değişsin; Windows eski simgeyi önbellekte tutmasın
+    const data = fs.readFileSync(path.join(__dirname, 'icons', 'icon.png'));
+    const hash = require('crypto').createHash('sha1').update(data).digest('hex').slice(0, 8);
+    const dir = app.getPath('userData');
+    const icon = path.join(dir, `bildirim-simgesi-${hash}.png`);
+    for (const f of fs.readdirSync(dir)) {
+      if (/^bildirim-simgesi.*\.png$/.test(f) && path.join(dir, f) !== icon) { try { fs.unlinkSync(path.join(dir, f)); } catch {} }
+    }
+    if (!fs.existsSync(icon)) fs.writeFileSync(icon, data);
     const key = `HKCU\\Software\\Classes\\AppUserModelId\\${AUMID}`;
     const { execFile } = require('child_process');
     execFile('reg', ['add', key, '/v', 'DisplayName', '/t', 'REG_SZ', '/d', 'Muvakkit', '/f'], { windowsHide: true }, () => {});
